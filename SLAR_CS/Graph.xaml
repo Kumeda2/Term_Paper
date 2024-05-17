@@ -1,0 +1,39 @@
+﻿<Window x:Class="SLAR_CS.Graph"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:oxy="http://oxyplot.org/wpf"
+        Title="SLAE Calculator" Height="490" Width="970">
+        
+    <Grid x:Name="GraphVisualization">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="680"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="90"/>
+        </Grid.RowDefinitions>
+        <Border x:Name="Visul" Background="#fff" CornerRadius="20" MinWidth="660" MinHeight="420" 
+                Margin="10" Grid.RowSpan="2">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="30" Color="LightGray" ShadowDepth="0"/>
+            </Border.Effect>
+            <oxy:PlotView x:Name="plotView" Margin="10" MinWidth="680" MinHeight="420" />
+        </Border>
+
+        <Border x:Name="Values" Background="#836eb3" MinWidth="240" MinHeight="420" Margin="0, 10, 10, 10" 
+                CornerRadius="20" Grid.Column="1" Grid.RowSpan="2">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="30" Color="LightGray" ShadowDepth="0"/>
+            </Border.Effect>
+            <StackPanel Margin="20">
+                <StackPanel x:Name="X1" Orientation="Horizontal">
+                    <TextBlock Text="X1 = " FontSize="18" Foreground="#fff"  Margin="0, 0, 0, 20"/>
+                </StackPanel>
+                <StackPanel x:Name="X2" Orientation="Horizontal">
+                    <TextBlock Text="X2 = " FontSize="18" Foreground="#fff"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
