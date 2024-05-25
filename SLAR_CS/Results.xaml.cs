@@ -196,7 +196,7 @@ namespace SLAR_CS
                     {
                         // Записуємо заголовок
                         writer.WriteLine(Title);
-
+                        
                         // Записуємо розв'язки
                         for (int i = 0; i < results.Length; i++)
                         {
