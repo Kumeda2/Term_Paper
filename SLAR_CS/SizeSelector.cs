@@ -13,14 +13,8 @@ namespace SLAR_CS
         private const byte Green = 66;
         private const byte Blue = 66;
         private const byte Alpha = 128;
-        private const string Graphycally = "Графічно (2х2)";
-        private const string IncorrectSize = "Для графічного розв'язку розмір має дорівнювати 2";
-        private const string ProgramName = "Калькулятор СЛАР";
-        private const string IncorrectSizeMassege = "Некоректний розмір системи";
-        private ComboBox comboBox;
+        private ComboBox Sizes;
         private Grid matrixGrid;
-        private ComboBox method;
-        private string selectedMethod;
         private int size;
         public bool isCorrect;
 
@@ -30,28 +24,26 @@ namespace SLAR_CS
             set { size = value; }
         }
 
-        public SizeSelector(ComboBox cb, Grid MatrixGrid, ComboBox _method, string selectedMethod)
+        public SizeSelector(ComboBox cb, Grid MatrixGrid)
         {
-            comboBox = cb;
+            Sizes = cb;
             matrixGrid = MatrixGrid;
-            method = _method;
-            this.selectedMethod = selectedMethod;
         }
 
         public void Selector(ComboBox size)
         {
             ComboBoxItem selectedItem = (ComboBoxItem)size.SelectedItem;
             Size = Convert.ToInt32(selectedItem.Content.ToString());
-            Visualisation(Size, method, matrixGrid);
+            Visualisation(Size, matrixGrid);
         }
 
-        private void Visualisation(int size, ComboBox method, Grid Matrix)
+        private void Visualisation(int size, Grid Matrix)
         {
             isCorrect = true;
 
             Matrix.Children.Clear();
-            comboBox.Background = Brushes.Transparent;
-            comboBox.ToolTip = null;
+            Sizes.Background = Brushes.Transparent;
+            Sizes.ToolTip = null;
             int last = 0;
 
             for (int i = 0; i < size; i++)
@@ -71,8 +63,8 @@ namespace SLAR_CS
         {
             Color color = Color.FromArgb(Alpha, Red, Green, Blue);
             SolidColorBrush brush = new SolidColorBrush(color);
-            comboBox.Background = brush;
-            comboBox.ToolTip = tip;
+            Sizes.Background = brush;
+            Sizes.ToolTip = tip;
             isCorrect = false;
 
         }
@@ -104,7 +96,14 @@ namespace SLAR_CS
             Grid.SetRow(textBlock, i);
             Grid.SetColumn(textBlock, j + 1);
             textBlock.Name = $"X1_{i}_{index}";
-            textBlock.Text = $"X{index + 1}";
+            if (index != size - 1)
+            {
+                textBlock.Text = $"X{index + 1}+";
+            }
+            else
+            {
+                textBlock.Text = $"X{index + 1}";
+            }
             SetTextBlockProperties(textBlock);
             Matrix.Children.Add(textBlock);
         }

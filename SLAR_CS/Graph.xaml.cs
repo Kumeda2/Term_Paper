@@ -22,10 +22,6 @@ namespace SLAR_CS
 
         public void SetupPlot(double[,] cubicSystem)
         {
-            for (int i = 0; i < 2; i++)
-            {
-                Console.WriteLine(results[i]);
-            }
 
             Button saveToFile = new Button();
             Grid.SetColumn(saveToFile, 1);

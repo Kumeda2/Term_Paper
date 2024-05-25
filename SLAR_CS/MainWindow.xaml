@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:SLAR_CS"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title="SLAE Calculator" Height="400" Width="750">
+        ResizeMode="CanMinimize"
+        Title="SLAE Calculator" MinHeight="400" MinWidth="750" Width="750" Height="400" MaxHeight="400" MaxWidth="750">
     <Grid Background="#ffdadada">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="280"/>
@@ -45,14 +46,16 @@
                             Click="Generation_Click"/>
                     </Grid>
                 </StackPanel>
-                <Border Grid.Row="1" Background="#836eb3" CornerRadius="20" Height="80" VerticalAlignment="Bottom">
+                <Border Grid.Row="1" Background="#836eb3" CornerRadius="20" Height="100" VerticalAlignment="Bottom">
                     <Border.Effect>
                         <DropShadowEffect Color="LightGray"/>
                     </Border.Effect>
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock Text="Діапазон допустимих чисел" FontWeight="Bold" Margin="5" FontSize="12" HorizontalAlignment="Center" Foreground="#fff"/>
-                        <TextBlock Text="(-10000; -0.0001) ∪ {0} ∪ (0.0001; 10000)" FontSize="12" HorizontalAlignment="Center" Foreground="#fff" />
-                        <TextBlock Text=""/>
+                        <TextBlock Text="[-10000; -1e-6] ∪ {0} ∪ [1e-6; 10000]" FontSize="12" HorizontalAlignment="Center" Foreground="#fff" />
+                        <TextBlock Text="*Дробові числа вводьте через крапку" FontSize="12" HorizontalAlignment="Center" Foreground="#fff"/>
+                        <TextBlock Text="*Максимальна точність - 6" FontSize="12" HorizontalAlignment="Center" Foreground="#fff"/>
+                        <TextBlock Text="чисел після коми" FontSize="12" HorizontalAlignment="Center" Foreground="#fff"/>
                     </StackPanel>
                 </Border>
 

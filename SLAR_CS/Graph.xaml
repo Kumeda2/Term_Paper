@@ -2,7 +2,8 @@
        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:oxy="http://oxyplot.org/wpf"
-        Title="SLAE Calculator" Height="490" Width="970">
+        ResizeMode="CanMinimize"
+        Title="SLAE Calculator" MinHeight="490" MinWidth="970" Height="490" Width="970" MaxWidth="640" MaxHeight="420">
         
     <Grid x:Name="GraphVisualization">
         <Grid.ColumnDefinitions>
@@ -18,7 +19,7 @@
             <Border.Effect>
                 <DropShadowEffect BlurRadius="30" Color="LightGray" ShadowDepth="0"/>
             </Border.Effect>
-            <oxy:PlotView x:Name="plotView" Margin="10" MinWidth="680" MinHeight="420" />
+            <oxy:PlotView x:Name="plotView" Margin="10" MinWidth="640" MinHeight="420"/>
         </Border>
 
         <Border x:Name="Values" Background="#836eb3" MinWidth="240" MinHeight="420" Margin="0, 10, 10, 10" 

@@ -66,12 +66,12 @@ namespace SLAR_CS
             TextBlock text = new TextBlock();
             Grid.SetColumn(text, 0);
             Grid.SetRow(text, 0);
-            Grid.SetColumnSpan(text, 3);
+            Grid.SetColumnSpan(text, 5);
 
             text.VerticalAlignment = VerticalAlignment.Center;
             text.HorizontalAlignment = HorizontalAlignment.Left;
-            text.Text = "Проміжні результати";
-            text.Margin = new Thickness(12, 0, 0, 0);
+            text.Text = "Проміжні результати(Розширена матриця)";
+            text.Margin = new Thickness(8, 0, 0, 0);
 
             HalfResult.Children.Add(text);
 

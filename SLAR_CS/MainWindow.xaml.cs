@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace SLAR_CS
@@ -10,10 +9,9 @@ namespace SLAR_CS
         private SizeSelector size;
         private Method method;
         private Matrix matrix;
-        private OptionGenerator generation;
+        private Generator generation;
         private Results resultsWindow;
         private const string SizeNotSelected = "Оберіть розмір системи";
-        private const string IncorrectSize = "Для графічного розв'язку розмір має дорівнювати 2";
         private const string IncorrectSizeMassege = "Некоректний розмір системи";
         private const string ProgramName = "Калькулятор СЛАР";
         private const string MethodNotSeleted = "Не обрано метод";
@@ -22,7 +20,7 @@ namespace SLAR_CS
         private const string MatrixMethod = "Матричний метод";
         private const string DeterminantZero = "Визначник доруівнює нулю, введіть інші коефіцієнти";
         private const string ParametersNotSet = "Встановіть параметри СЛАР";
-        private const string Undefined = "Система не має розв'язоків";
+        private const string Undefined = "Система не має розв'язків";
         private const string Inf = "Система має безліч розв'язків";
         private double[,] copyOfMatrix;
 
@@ -37,14 +35,13 @@ namespace SLAR_CS
         {
             ComboBox methodComboBox = (ComboBox)sender;
             method = new Method();
-            method.SelectionAndValidation(methodComboBox, Size);
+            method.SelectionAndValidation(methodComboBox);
         }
 
-        public void Size_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Size_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox sizeComboBox = (ComboBox)sender;
-            string arg;
-            size = new SizeSelector(sizeComboBox, Matrix, Method, arg = method != null? method.SelectedMethod : null);
+            size = new SizeSelector(sizeComboBox, Matrix);
             size.Selector(sizeComboBox);
         }
 
@@ -71,16 +68,16 @@ namespace SLAR_CS
             }
             else if (size == null || size.Size == 0)
             {
-                size = new SizeSelector(Size, Matrix, Method, method.SelectedMethod);
+                size = new SizeSelector(Size, Matrix);
                 size.Size = 0;
                 size.SetComboBoxBackground(SizeNotSelected);
                 MessageBox.Show(SizeNotSelected, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            else if (method == null || method.SelectedMethod == "")
+            else if (method == null || method.selectedMethod == "")
             {
                 method = new Method();
-                method.SelectedMethod = "";
+                method.selectedMethod = "";
                 method.MethodBackground(Method);
                 MessageBox.Show(MethodNotSeleted, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -90,61 +87,61 @@ namespace SLAR_CS
                 matrix = new Matrix(size.Size);
                 matrix.FillingMatrix(size.Size, Matrix);
                 copyOfMatrix = new double[size.Size, size.Size + 1];
-                for(int i = 0; i < size.Size; i++)
+                for (int i = 0; i < size.Size; i++)
                 {
-                    for(int j = 0; j < size.Size + 1; j++)
+                    for (int j = 0; j < size.Size + 1; j++)
                     {
                         copyOfMatrix[i, j] = matrix.matrix[i, j];
                     }
-                }    
+                }
             }
 
-            if (matrix.result == Result.Success)
+            if (matrix.result == EnumProcesResult.Result.Success)
             {
-                if (method.SelectedMethod == Gauss)
+                if (method.selectedMethod == Gauss)
                 {
                     method.GaussMethod(copyOfMatrix, size.Size);
-                    if (method.resultState == IsError.Undefined)
+                    if (method.resultState == EnumSolutions.IsError.Undefined)
                     {
                         MessageBox.Show(Undefined, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
-                    else if(method.resultState == IsError.Inf)
+                    else if (method.resultState == EnumSolutions.IsError.Inf)
                     {
                         MessageBox.Show(Inf, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
                 }
-                else if (method.SelectedMethod == JordanGauss)
+                else if (method.selectedMethod == JordanGauss)
                 {
                     method.JordanGaussMethod(copyOfMatrix, size.Size);
-                    if (method.resultState == IsError.Undefined)
+                    if (method.resultState == EnumSolutions.IsError.Undefined)
                     {
                         MessageBox.Show(Undefined, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
-                    else if (method.resultState == IsError.Inf)
+                    else if (method.resultState == EnumSolutions.IsError.Inf)
                     {
                         MessageBox.Show(Inf, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
                 }
-                else if (method.SelectedMethod == MatrixMethod)
+                else if (method.selectedMethod == MatrixMethod)
                 {
-                    if (matrix.Determinant(size.Size) == 0 && matrix.result != Result.InvalidInput)
+                    if (matrix.Determinant(size.Size) == 0 && matrix.result != EnumProcesResult.Result.InvalidInput)
                     {
                         MessageBox.Show(DeterminantZero, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
                     method.MatrixMethod(copyOfMatrix, size.Size);
                 }
-                
+
                 if (resultsWindow != null)
                 {
                     resultsWindow.Close();
                 }
 
-                resultsWindow = new Results(method.output, method.intermediateMatrix, method.SelectedMethod, matrix.matrix);
+                resultsWindow = new Results(method.output, method.intermediateMatrix, method.selectedMethod, matrix.matrix);
                 resultsWindow.Show();
                 resultsWindow.AddingAnswer(method.output);
                 resultsWindow.AddingX(method.output.Length);
@@ -154,7 +151,7 @@ namespace SLAR_CS
                 {
                     resultsWindow = null;
                 };
-                
+
             }
         }
 
@@ -167,18 +164,18 @@ namespace SLAR_CS
             }
             else if (size == null)
             {
-                size = new SizeSelector(Size, Matrix, Method, method.SelectedMethod);
+                size = new SizeSelector(Size, Matrix);
                 size.SetComboBoxBackground(SizeNotSelected);
                 MessageBox.Show(SizeNotSelected, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            if(size.isCorrect ==  false)
+            if (size.isCorrect == false)
             {
                 size.SetComboBoxBackground(SizeNotSelected);
-                MessageBox.Show(IncorrectSizeMassege, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(SizeNotSelected, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            generation = new OptionGenerator();
+            generation = new Generator();
             generation.Generating(Matrix);
         }
     }

@@ -4,13 +4,12 @@ using System.Windows.Media;
 
 namespace SLAR_CS
 {
-    internal class Method
+    internal class Method : EnumSolutions
     {
         private const byte Red = 227;
         private const byte Green = 66;
         private const byte Blue = 66;
         private const byte Alpha = 128;
-        private const string Graph = "Графічно (2х2)";
         private const string MethodNotSelected = "Метод не обрано";
         public string selectedMethod;
         public double[] output;
@@ -18,33 +17,23 @@ namespace SLAR_CS
         public double[,] intermediateMatrix;
         public IsError resultState = IsError.Success;
 
-        public string SelectedMethod
-        {
-            get => selectedMethod;
-            set { selectedMethod = value; }
-        }
-
         public Method()
         {
 
         }
 
-        public void SelectionAndValidation(ComboBox cb, ComboBox sizeCombobox)
+        public void SelectionAndValidation(ComboBox method)
         {
-            ComboBoxItem selectedItem = (ComboBoxItem)cb.SelectedItem;
+            ComboBoxItem selectedItem = (ComboBoxItem)method.SelectedItem;
             if (selectedItem == null)
             {
-                MethodBackground(cb);
+                MethodBackground(method);
             }
             else
             {
-                SelectedMethod = selectedItem.Content.ToString();
-                if (SelectedMethod == Graph)
-                {
-                    sizeCombobox.Text = "2";
-                }
-                cb.Background = Brushes.Transparent;
-                cb.ToolTip = null;
+                selectedMethod = selectedItem.Content.ToString();
+                method.Background = Brushes.Transparent;
+                method.ToolTip = null;
             }
         }
 
@@ -74,7 +63,7 @@ namespace SLAR_CS
                 if (matrix[i, i] == 0)
                 {
                     // Пошук ненульового елемента у стовпці для обміну рядків
-                    for (int j = i + 1; j < size; j++)
+                    for (int j = i + 1; j < size - 1; j++)
                     {
                         if (matrix[j, i] != 0)
                         {
@@ -96,30 +85,29 @@ namespace SLAR_CS
                     }
                     methodComplexity++;
                 }
-                methodComplexity++;
+
                 //Перевірка на скінченність розв'язків
                 isInf(matrix[i, i]);
                 if (resultState == IsError.Inf)
                 {
                     return;
                 }
-                methodComplexity++;
 
                 // Прямий хід методу Гаусса: нормалізація матриці
                 for (int j = i + 1; j < size; j++)
                 {
-                    double coefficient = matrix[j, i] / matrix[i, i]; // Обчислення коефіцієнту нормалізації
-                    for (int n = i; n < size + 1; n++)
+                    double coefficient = matrix[j, i] / matrix[i, i]; 
+                    for (int n = i; n < size; n++)
                     {
-                        matrix[j, n] -= coefficient * matrix[i, n]; // Віднімання нормалізованих рядків
-                        if (Math.Abs(matrix[j, n]) < 1e-10)
+                        matrix[j, n] -= coefficient * matrix[i, n]; 
+                        if (Math.Abs(matrix[j, n]) < 1e-6)
                             matrix[j, n] = 0;
                         methodComplexity++;
                     }
-                    matrix[j, size] -= coefficient * matrix[i, size]; // Віднімання нормалізованих значень вектора-вільних членів
-                    methodComplexity++;
+                    matrix[j, size] -= coefficient * matrix[i, size]; 
+                    methodComplexity += 2;
                 }
-                methodComplexity++;
+                methodComplexity += 2;
             }
             methodComplexity++;
 
@@ -135,12 +123,10 @@ namespace SLAR_CS
                     output[i] -= matrix[i, j] * output[j];
                     methodComplexity++;
                 }
-                output[i] /= matrix[i, i]; // Ділення на головний діагональний елемент
-                methodComplexity++;
+                output[i] /= matrix[i, i];
+                methodComplexity += 2;
             }
             methodComplexity++;
-            //Перевірка на скінченність розв'язків
-            isNotInf(size, matrix);
         }
         public void JordanGaussMethod(double[,] matrix, int size)
         {
@@ -155,33 +141,33 @@ namespace SLAR_CS
                 return;
             }
 
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < size - 1; i++)
             {
-                // Пошук максимального елемента у стовпці
-                int row = i;
-                double maxValue = Math.Abs(matrix[i, i]);
-                for (int j = i + 1; j < size; j++)
+                if (matrix[i, i] == 0)
                 {
-                    if (Math.Abs(matrix[j, i]) > maxValue)
+                    // Пошук ненульового елемента у стовпці для обміну рядків
+                    for (int j = i + 1; j < size; j++)
                     {
-                        maxValue = Math.Abs(matrix[j, i]);
-                        row = j;
+                        if (matrix[j, i] != 0)
+                        {
+                            // Обмін рядків, якщо знайдено ненульовий елемент
+                            for (int n = 0; n < size; n++)
+                            {
+                                double temp = matrix[i, n];
+                                matrix[i, n] = matrix[j, n];
+                                matrix[j, n] = temp;
+                                temp = matrix[i, size];
+                                matrix[i, size] = matrix[j, size];
+                                matrix[j, size] = temp;
+                                methodComplexity++;
+                            }
+                            methodComplexity++;
+                            break; // Вихід з циклу після обміну рядків   
+                        }
+                        methodComplexity++;
                     }
                     methodComplexity++;
                 }
-                methodComplexity++;
-                // Обмін рядками
-                for (int j = 0; j < size; j++)
-                {
-                    double temp = matrix[i, j];
-                    matrix[i, j] = matrix[row, j];
-                    matrix[row, j] = temp;
-                    methodComplexity++;
-                }
-                methodComplexity++;
-                double temporary = matrix[i, size];
-                matrix[i, size] = matrix[row, size];
-                matrix[row, size] = temporary;
 
                 //Перевірка на скінченність розв'язків
                 isInf(matrix[i, i]);
@@ -190,7 +176,7 @@ namespace SLAR_CS
                     return;
                 }
 
-                // Зводимо матрицю до трикутної форми
+                //Зведення матриці до трикутної форми
                 double pivot = matrix[i, i];
 
                 for (int j = i; j < size; j++)
@@ -204,19 +190,18 @@ namespace SLAR_CS
 
                 for (int j = i + 1; j < size; j++)
                 {
-                    double factor = matrix[j, i];
+                    double coefficient = matrix[j, i];
                     for (int k = i; k < size; k++)
                     {
-                        matrix[j, k] -= factor * matrix[i, k];
+                        matrix[j, k] -= coefficient * matrix[i, k];
                         methodComplexity++;
                     }
-                    matrix[j, size] -= factor * matrix[i, size];
-                    methodComplexity++;
+                    matrix[j, size] -= coefficient * matrix[i, size];
+                    methodComplexity += 2;
                 }
-                methodComplexity++;
+                methodComplexity += 2;
             }
             methodComplexity++;
-
             //запис проміжних результатів
             intermediatePhase(size, matrix);
 
@@ -225,29 +210,24 @@ namespace SLAR_CS
             {
                 for (int j = i - 1; j >= 0; j--)
                 {
-                    double factor = matrix[j, i];
+                    double coefficient = matrix[j, i];
                     for (int k = i; k < size; k++)
                     {
-                        matrix[j, k] -= factor * matrix[i, k];
+                        matrix[j, k] -= coefficient * matrix[i, k];
                         methodComplexity++;
                     }
-                    matrix[j, size] -= factor * matrix[i, size];
-                    methodComplexity++;
+                    matrix[j, size] -= coefficient * matrix[i, size];
+                    methodComplexity += 2;
                 }
-                methodComplexity++;
+                methodComplexity += 2;
             }
             methodComplexity++;
-
-            //Перевірка на скінченність розв'язків
-            isNotInf(size, matrix);
 
             output = new double[size];
             for (int i = 0; i < size; i++)
             {
                 output[i] = matrix[i, size];
-                methodComplexity++;
             }
-            methodComplexity++;
         }
         public void MatrixMethod(double[,] matrix, int size)
         {
@@ -266,48 +246,43 @@ namespace SLAR_CS
                     {
                         inverseMatrix[i, j] = 1.0;
                     }
-                    methodComplexity++;
                 }
-                methodComplexity++;
             }
-            methodComplexity++;
 
             for (int i = 0; i < size; i++)
             {
-                int row = i;
-                double maxValue = Math.Abs(matrix[i, i]);
-                for (int j = i + 1; j < size; j++)
+                if (matrix[i, i] == 0)
                 {
-                    if (Math.Abs(matrix[row, j]) > maxValue)
+                    // Пошук ненульового елемента у стовпці для обміну рядків
+                    for (int j = i + 1; j < size - 1; j++)
                     {
-                        maxValue = Math.Abs(matrix[row, j]);
-                        row = j;
+                        if (matrix[j, i] != 0)
+                        {
+                            // Обмін рядків, якщо знайдено ненульовий елемент
+                            for (int n = 0; n < size; n++)
+                            {
+                                double temp = matrix[i, n];
+                                matrix[i, n] = matrix[j, n];
+                                matrix[j, n] = temp;
+                                temp = inverseMatrix[i, n];
+                                inverseMatrix[i, n] = inverseMatrix[j, n];
+                                inverseMatrix[j, n] = temp;
+                                methodComplexity++;
+                            }
+                            methodComplexity++;
+                            break; // Вихід з циклу після обміну рядків   
+                        }
+                        methodComplexity++;
                     }
                     methodComplexity++;
                 }
-                methodComplexity++;
-                // Обмін рядками
-                for (int k = 0; k < size; k++)
-                {
-                    double temp = matrix[i, k];
-                    matrix[i, k] = matrix[row, k];
-                    matrix[row, k] = temp;
-                    temp = inverseMatrix[i, k];
-                    inverseMatrix[i, k] = inverseMatrix[row, k];
-                    inverseMatrix[row, k] = temp;
-                    methodComplexity++;
-                }
-                methodComplexity++;
-                // Зводимо матрицю до трикутної форми
+
+                //Зведення матриці до трикутної форми
                 double pivot = matrix[i, i];
-                for (int j = i; j < size; j++)
-                {
-                    matrix[i, j] /= pivot;
-                    methodComplexity++;
-                }
-                methodComplexity++;
+
                 for (int j = 0; j < size; j++)
                 {
+                    matrix[i, j] /= pivot;
                     inverseMatrix[i, j] /= pivot;
                     methodComplexity++;
                 }
@@ -315,21 +290,16 @@ namespace SLAR_CS
 
                 for (int j = i + 1; j < size; j++)
                 {
-                    double factor = matrix[j, i];
-                    for (int k = i; k < size; k++)
-                    {
-                        matrix[j, k] -= factor * matrix[i, k];
-                        methodComplexity++;
-                    }
-                    methodComplexity++;
+                    double coefficient = matrix[j, i];
                     for (int k = 0; k < size; k++)
                     {
-                        inverseMatrix[j, k] -= factor * inverseMatrix[i, k];
+                        matrix[j, k] -= coefficient * matrix[i, k];
+                        inverseMatrix[j, k] -= coefficient * inverseMatrix[i, k];
                         methodComplexity++;
                     }
                     methodComplexity++;
                 }
-                methodComplexity++;
+                methodComplexity += 2;
             }
             methodComplexity++;
 
@@ -338,33 +308,28 @@ namespace SLAR_CS
             {
                 for (int j = i - 1; j >= 0; j--)
                 {
-                    double factor = matrix[j, i];                    for (int k = i; k < size; k++)
+                    double coefficient = matrix[j, i];
+                    for (int k = 0; k < size; k++)
                     {
-                        matrix[j, k] -= factor * matrix[i, k];
-                        methodComplexity++;
-                    }                    methodComplexity++;                    for (int k = 0; k < size; k++)
-                    {
-                        inverseMatrix[j, k] -= factor * inverseMatrix[i, k];
+                        matrix[j, k] -= coefficient * matrix[i, k];
+                        inverseMatrix[j, k] -= coefficient * inverseMatrix[i, k];
                         methodComplexity++;
                     }
-                    methodComplexity++;
+                    methodComplexity += 2;
                 }
-                methodComplexity++;
+                methodComplexity += 2;
             }
             methodComplexity++;
 
             //запис проміжних результатів
-            intermediateMatrix = new double[size, size + 1];
+            intermediateMatrix = new double[size, size];
             for (int k = 0; k < size; k++)
             {
                 for (int j = 0; j < size; j++)
                 {
                     intermediateMatrix[k, j] = inverseMatrix[k, j];
-                    methodComplexity++;
                 }
-                methodComplexity++;
             }
-            methodComplexity++;
 
             //Обчислюємо розв'язок системи
             output = new double[size];
@@ -376,7 +341,7 @@ namespace SLAR_CS
                     output[i] += inverseMatrix[i, j] * matrix[j, size];
                     methodComplexity++;
                 }
-                methodComplexity++;
+                methodComplexity += 2;
             }
             methodComplexity++;
         }
@@ -410,26 +375,6 @@ namespace SLAR_CS
             }
         }
 
-        private void isNotInf(int size, double[,] matrix)
-        {
-            for (int i = 0; i < size; i++)
-            {
-                int zeromethodComplexity = 0;
-                for (int j = 0; j < size; j++)
-                {
-                    if (matrix[i, j] == 0)
-                    {
-                        zeromethodComplexity++;
-                    }
-                }
-                if (zeromethodComplexity == size && matrix[i, size] == 0)
-                {
-                    resultState = IsError.Inf;
-                    return;
-                }
-            }
-        }
-
         private void intermediatePhase(int size, double[,] matrix)
         {
             intermediateMatrix = new double[size, size + 1];
@@ -441,13 +386,5 @@ namespace SLAR_CS
                 }
             }
         }
-
-    }
-
-    public enum IsError
-    {
-        Success,
-        Undefined,
-        Inf
     }
 }

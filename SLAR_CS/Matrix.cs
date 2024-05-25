@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace SLAR_CS
 {
-    internal class Matrix
+    internal class Matrix : EnumProcesResult
     {
         private const byte Red = 227;
         private const byte Green = 66;
@@ -17,11 +15,11 @@ namespace SLAR_CS
         private const double Max = 10000.0;
         private const double Min = -Max;
         private const string ProgramName = "Калькулятор СЛАР";
-        private const string IncvalidInput = "Введено некоректні символи";
+        private const string InvalidInput = "Введено некоректні символи";
         private const string OutOfLimits = "Введене число, що не входить в межі";
-        private const string UserInputLimit = "Введіть число в межах (-10000; 10000)";
         private const string UserInput = "Введіть число";
         private const string CloseToZero = "Введений коефіцієнт занадто близький до нуля, введіть або 0 або зменшіть кількість знаків після коми";
+        private const string IncorrectAccuracy = "Введіть число з меншою точністю";
 
         private int size;
 
@@ -36,7 +34,7 @@ namespace SLAR_CS
 
         public void FillingMatrix(int size, Grid MatrixGrid)
         {
-            
+
             foreach (UIElement element in MatrixGrid.Children)
             {
                 if (!(element is TextBox textBox)) continue;
@@ -54,11 +52,15 @@ namespace SLAR_CS
                 textBox.Text = textBox.Text.Replace('.', ',');
                 if (double.TryParse(textBox.Text, out double value))
                 {
+                    if (Double.IsNaN(value))
+                    {
+                        IncorrectActions(textBox, InvalidInput);
+                        break;
+                    }
+
                     if (value > Max || value < Min)
                     {
-                        SetTextBoxProperties(textBox, Color.FromArgb(Alpha, Red, Green, Blue), UserInputLimit);
-                        MessageBox.Show(OutOfLimits, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
-                        result = Result.InvalidInput;
+                        IncorrectActions(textBox, OutOfLimits);
                         break;
                     }
                     //валідація експоненти
@@ -67,11 +69,9 @@ namespace SLAR_CS
                         string[] expParts = textBox.Text.Split('e', 'E');
                         if (double.TryParse(expParts[1], out double power))
                         {
-                            if (Math.Abs(power) > 3)
+                            if (Math.Abs(power) > 6)
                             {
-                                SetTextBoxProperties(textBox, Color.FromArgb(Alpha, Red, Green, Blue), UserInputLimit);
-                                MessageBox.Show(CloseToZero, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
-                                result = Result.InvalidInput;
+                                IncorrectActions(textBox, CloseToZero);
                                 break;
                             }
                         }
@@ -81,23 +81,14 @@ namespace SLAR_CS
                     if (textBox.Text.Contains(','))
                     {
                         string[] afterDot = textBox.Text.Split(',');
-                        foreach(char c in afterDot[1])
+                        foreach (char c in afterDot[1])
                         {
-                            if (c == '0')
-                            {
-                                counter++;
-                            }
-                            else
-                            {
-                                break;
-                            }
+                            counter++;
                         }
                     }
-                    if (counter > 3)
+                    if (counter > 6)
                     {
-                        SetTextBoxProperties(textBox, Color.FromArgb(Alpha, Red, Green, Blue), UserInputLimit);
-                        MessageBox.Show(CloseToZero, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
-                        result = Result.InvalidInput;
+                        IncorrectActions(textBox, IncorrectAccuracy);
                         break;
                     }
 
@@ -110,7 +101,7 @@ namespace SLAR_CS
                 else
                 {
                     SetTextBoxProperties(textBox, Color.FromArgb(Alpha, Red, Green, Blue), UserInput);
-                    MessageBox.Show(IncvalidInput, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(InvalidInput, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
                     result = Result.InvalidInput;
                     break;
                 }
@@ -119,11 +110,18 @@ namespace SLAR_CS
             if (result == Result.Success)
                 FillingWithZeroes(MatrixGrid);
         }
-
-        public static void SetTextBoxProperties(TextBox textBox, Color? backgroundColor = null, string toolTip = null)
+        ///
+        public void SetTextBoxProperties(TextBox textBox, Color? backgroundColor = null, string toolTip = null)
         {
             textBox.Background = new SolidColorBrush(backgroundColor ?? Colors.Transparent);
             textBox.ToolTip = toolTip;
+        }
+
+        private void IncorrectActions(TextBox textBox, string text)
+        {
+            SetTextBoxProperties(textBox, Color.FromArgb(Alpha, Red, Green, Blue), UserInput);
+            MessageBox.Show(text, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
+            result = Result.InvalidInput;
         }
 
         private void FillingWithZeroes(Grid MatrixGrid)
@@ -140,7 +138,7 @@ namespace SLAR_CS
             }
         }
 
-        public double Determinant(int size) 
+        public double Determinant(int size)
         {
             double[,] copyOfMatrix = new double[size, size];
 
@@ -187,7 +185,6 @@ namespace SLAR_CS
                     }
                 }
             }
-
             for (int i = 0; i < size; i++)
             {
                 determinant *= copyOfMatrix[i, i];
@@ -195,12 +192,5 @@ namespace SLAR_CS
 
             return determinant;
         }
-    }
-
-    internal enum Result
-    {
-        Success,
-        InvalidInput,
-        InvalidParameters
     }
 }
