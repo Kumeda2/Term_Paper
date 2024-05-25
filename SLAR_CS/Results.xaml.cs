@@ -33,6 +33,7 @@ namespace SLAR_CS
                 Grid.SetColumn(x, 2);
                 Grid.SetRow(x, i);
 
+                x.IsReadOnly = true;
                 x.Text = result[i].ToString();
                 x.VerticalAlignment = VerticalAlignment.Center;
                 x.HorizontalAlignment = HorizontalAlignment.Left;
@@ -148,6 +149,7 @@ namespace SLAR_CS
             Grid.SetRow(elem, i + 1);
             Grid.SetColumn(elem, j);
 
+            elem.IsReadOnly = true;
             elem.Text = _halfResults[i, j].ToString();
             elem.Width = 30;
             elem.VerticalAlignment = VerticalAlignment.Center;

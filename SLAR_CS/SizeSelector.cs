@@ -121,6 +121,7 @@ namespace SLAR_CS
             Grid.SetColumn(textBlock_eq, last - 1);
             textBlock_eq.Name = $"Equal_{i}";
             textBlock_eq.Text = "=";
+            textBlock_eq.Margin = new Thickness(0, 0, 7, 0);
             SetTextBlockProperties(textBlock_eq);
             Matrix.Children.Add(textBlock_eq);
         }
