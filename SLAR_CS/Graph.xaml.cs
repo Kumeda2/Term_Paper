@@ -12,6 +12,11 @@ namespace SLAR_CS
     {
         private const string SavingError = "Помилка збереження файла:";
         private const string Error = "Помилка";
+        private const string Solution = "Розв'язок";
+        private const string Save = "Зберегти до файла";
+        private const string Graphic = "Графічне відображення";
+        private const string First = "Перше рівняння";
+        private const string Second = "Друге рівняння";
         private double[] results = new double[2];
         public Graph(double[] results)
         {
@@ -27,7 +32,7 @@ namespace SLAR_CS
             Grid.SetColumn(saveToFile, 1);
             Grid.SetRow(saveToFile, 1);
 
-            saveToFile.Content = "Зберегти до файла";
+            saveToFile.Content = Save;
             saveToFile.Height = 30;
             saveToFile.Width = 140;
             saveToFile.FontSize = 14;
@@ -77,11 +82,11 @@ namespace SLAR_CS
                 secondDotX = (cubicSystem[0, 2] - cubicSystem[0, 1] * secondDotY) / cubicSystem[0, 0];
             }
 
-            var plotModel = new PlotModel { Title = "Графічний метод" };
+            var plotModel = new PlotModel { Title = Graphic };
 
             var lineSeries_1 = new LineSeries
             {
-                Title = "Line Series",
+                Title = First,
                 MarkerType = MarkerType.None
             };
 
@@ -93,7 +98,7 @@ namespace SLAR_CS
 
             var lineSeries_2 = new LineSeries
             {
-                Title = "Line Series",
+                Title = Second,
                 MarkerType = MarkerType.None
             };
 
@@ -126,27 +131,20 @@ namespace SLAR_CS
 
         private void File_Click(object sender, RoutedEventArgs e)
         {
-            // Створюємо вікно вибору файлу
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+            saveFileDialog.Filter = "Text files (*.txt)|*.txt";
 
-            // Показуємо вікно вибору файлу і чекаємо на результат
             bool? result = saveFileDialog.ShowDialog();
 
-            // Якщо користувач вибрав файл і натиснув "Зберегти"
             if (result == true)
             {
-                // Отримуємо шлях до вибраного файла
                 string filePath = saveFileDialog.FileName;
                 try
                 {
-                    // Відкриваємо файл для запису
                     using (StreamWriter writer = new StreamWriter(filePath))
                     {
-                        // Записуємо заголовок
-                        writer.WriteLine(Title);
+                        writer.WriteLine(Solution);
 
-                        // Записуємо розв'язки
                         for (int i = 0; i < results.Length; i++)
                         {
                             writer.WriteLine($"X{i + 1}: {results[i].ToString()}");

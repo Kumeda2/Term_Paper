@@ -12,7 +12,6 @@ namespace SLAR_CS
         private Generator generation;
         private Results resultsWindow;
         private const string SizeNotSelected = "Оберіть розмір системи";
-        private const string IncorrectSizeMassege = "Некоректний розмір системи";
         private const string ProgramName = "Калькулятор СЛАР";
         private const string MethodNotSeleted = "Не обрано метод";
         private const string Gauss = "Метод Гауса";

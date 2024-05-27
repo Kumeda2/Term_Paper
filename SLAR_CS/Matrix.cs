@@ -13,16 +13,14 @@ namespace SLAR_CS
         private const byte Blue = 66;
         private const byte Alpha = 128;
         private const double Max = 10000.0;
-        private const double Min = -Max;
+        private const double Min = -10000.0;
         private const string ProgramName = "Калькулятор СЛАР";
         private const string InvalidInput = "Введено некоректні символи";
         private const string OutOfLimits = "Введене число, що не входить в межі";
         private const string UserInput = "Введіть число";
-        private const string CloseToZero = "Введений коефіцієнт занадто близький до нуля, введіть або 0 або зменшіть кількість знаків після коми";
         private const string IncorrectAccuracy = "Введіть число з меншою точністю";
 
         private int size;
-
         public double[,] matrix;
         public Result result;
 
@@ -71,7 +69,7 @@ namespace SLAR_CS
                         {
                             if (Math.Abs(power) > 6)
                             {
-                                IncorrectActions(textBox, CloseToZero);
+                                IncorrectActions(textBox, IncorrectAccuracy);
                                 break;
                             }
                         }

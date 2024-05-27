@@ -50,45 +50,20 @@ namespace SLAR_CS
             resultState = IsError.Success;
             output = new double[size];
 
-            //Перевірка на наявність розв'язків
-            isExist(size, matrix);
-            if (resultState == IsError.Undefined)
-            {
-                return;
-            }
-
             // заміна опорних діагональних елементів, які дорівнюють 0
-            for (int i = 0; i < size - 1; i++)
+            for (int i = 0; i < size; i++)
             {
-                if (matrix[i, i] == 0)
-                {
-                    // Пошук ненульового елемента у стовпці для обміну рядків
-                    for (int j = i + 1; j < size - 1; j++)
-                    {
-                        if (matrix[j, i] != 0)
-                        {
-                            // Обмін рядків, якщо знайдено ненульовий елемент
-                            for (int n = 0; n < size; n++)
-                            {
-                                double temp = matrix[i, n];
-                                matrix[i, n] = matrix[j, n];
-                                matrix[j, n] = temp;
-                                temp = matrix[i, size];
-                                matrix[i, size] = matrix[j, size];
-                                matrix[j, size] = temp;
-                                methodComplexity++;
-                            }
-                            methodComplexity++;
-                            break; // Вихід з циклу після обміну рядків
-                        }
-                        methodComplexity++;
-                    }
-                    methodComplexity++;
-                }
+                methodComplexity++;
+                methodComplexity += RemoveZero(size, i, matrix);
 
                 //Перевірка на скінченність розв'язків
-                isInf(matrix[i, i]);
+                isInf(matrix[i, i], matrix[i, size]);
+                isExist(size, matrix);
                 if (resultState == IsError.Inf)
+                {
+                    return;
+                }
+                else if (resultState == IsError.Undefined)
                 {
                     return;
                 }
@@ -96,20 +71,16 @@ namespace SLAR_CS
                 // Прямий хід методу Гаусса: нормалізація матриці
                 for (int j = i + 1; j < size; j++)
                 {
+                    methodComplexity++;
                     double coefficient = matrix[j, i] / matrix[i, i]; 
                     for (int n = i; n < size; n++)
                     {
-                        matrix[j, n] -= coefficient * matrix[i, n]; 
-                        if (Math.Abs(matrix[j, n]) < 1e-6)
-                            matrix[j, n] = 0;
                         methodComplexity++;
+                        matrix[j, n] -= coefficient * matrix[i, n]; 
                     }
                     matrix[j, size] -= coefficient * matrix[i, size]; 
-                    methodComplexity += 2;
                 }
-                methodComplexity += 2;
             }
-            methodComplexity++;
 
             //запис проміжних результатів
             intermediatePhase(size, matrix);
@@ -117,16 +88,15 @@ namespace SLAR_CS
             // Зворотній хід методу Гаусса: обчислення розв'язку
             for (int i = size - 1; i >= 0; i--)
             {
+                methodComplexity++;
                 output[i] = matrix[i, size];
                 for (int j = i + 1; j < size; j++)
                 {
-                    output[i] -= matrix[i, j] * output[j];
                     methodComplexity++;
+                    output[i] -= matrix[i, j] * output[j];  
                 }
                 output[i] /= matrix[i, i];
-                methodComplexity += 2;
             }
-            methodComplexity++;
         }
         public void JordanGaussMethod(double[,] matrix, int size)
         {
@@ -134,44 +104,19 @@ namespace SLAR_CS
             resultState = IsError.Success;
             output = new double[size];
 
-            //Перевірка на наявність розв'язків
-            isExist(size, matrix);
-            if (resultState == IsError.Undefined)
+            for (int i = 0; i < size; i++)
             {
-                return;
-            }
-
-            for (int i = 0; i < size - 1; i++)
-            {
-                if (matrix[i, i] == 0)
-                {
-                    // Пошук ненульового елемента у стовпці для обміну рядків
-                    for (int j = i + 1; j < size; j++)
-                    {
-                        if (matrix[j, i] != 0)
-                        {
-                            // Обмін рядків, якщо знайдено ненульовий елемент
-                            for (int n = 0; n < size; n++)
-                            {
-                                double temp = matrix[i, n];
-                                matrix[i, n] = matrix[j, n];
-                                matrix[j, n] = temp;
-                                temp = matrix[i, size];
-                                matrix[i, size] = matrix[j, size];
-                                matrix[j, size] = temp;
-                                methodComplexity++;
-                            }
-                            methodComplexity++;
-                            break; // Вихід з циклу після обміну рядків   
-                        }
-                        methodComplexity++;
-                    }
-                    methodComplexity++;
-                }
+                methodComplexity++;
+                methodComplexity += RemoveZero(size, i, matrix);
 
                 //Перевірка на скінченність розв'язків
-                isInf(matrix[i, i]);
+                isInf(matrix[i, i], matrix[i, size]);
+                isExist(size, matrix);
                 if (resultState == IsError.Inf)
+                {
+                    return;
+                }
+                else if (resultState == IsError.Undefined)
                 {
                     return;
                 }
@@ -181,47 +126,44 @@ namespace SLAR_CS
 
                 for (int j = i; j < size; j++)
                 {
-                    matrix[i, j] /= pivot;
                     methodComplexity++;
+                    matrix[i, j] /= pivot;
                 }
-                methodComplexity++;
 
                 matrix[i, size] /= pivot;
 
                 for (int j = i + 1; j < size; j++)
                 {
+                    methodComplexity++;
                     double coefficient = matrix[j, i];
                     for (int k = i; k < size; k++)
                     {
-                        matrix[j, k] -= coefficient * matrix[i, k];
                         methodComplexity++;
+                        matrix[j, k] -= coefficient * matrix[i, k];
                     }
                     matrix[j, size] -= coefficient * matrix[i, size];
-                    methodComplexity += 2;
                 }
-                methodComplexity += 2;
             }
-            methodComplexity++;
+
             //запис проміжних результатів
             intermediatePhase(size, matrix);
 
             // Зводимо матрицю до одиничної форми
             for (int i = size - 1; i > 0; i--)
             {
+                methodComplexity++;
                 for (int j = i - 1; j >= 0; j--)
                 {
+                    methodComplexity++;
                     double coefficient = matrix[j, i];
                     for (int k = i; k < size; k++)
                     {
-                        matrix[j, k] -= coefficient * matrix[i, k];
                         methodComplexity++;
+                        matrix[j, k] -= coefficient * matrix[i, k];
                     }
                     matrix[j, size] -= coefficient * matrix[i, size];
-                    methodComplexity += 2;
                 }
-                methodComplexity += 2;
             }
-            methodComplexity++;
 
             output = new double[size];
             for (int i = 0; i < size; i++)
@@ -233,6 +175,7 @@ namespace SLAR_CS
         {
             methodComplexity = 0;
             double[,] inverseMatrix = new double[size, size];
+            output = new double[size];
             //створення одиничної матриці
             for (int i = 0; i < size; i++)
             {
@@ -251,30 +194,29 @@ namespace SLAR_CS
 
             for (int i = 0; i < size; i++)
             {
+                methodComplexity++;
                 if (matrix[i, i] == 0)
                 {
                     // Пошук ненульового елемента у стовпці для обміну рядків
                     for (int j = i + 1; j < size - 1; j++)
                     {
+                        methodComplexity++;
                         if (matrix[j, i] != 0)
                         {
                             // Обмін рядків, якщо знайдено ненульовий елемент
                             for (int n = 0; n < size; n++)
                             {
+                                methodComplexity++;
                                 double temp = matrix[i, n];
                                 matrix[i, n] = matrix[j, n];
                                 matrix[j, n] = temp;
                                 temp = inverseMatrix[i, n];
                                 inverseMatrix[i, n] = inverseMatrix[j, n];
                                 inverseMatrix[j, n] = temp;
-                                methodComplexity++;
                             }
-                            methodComplexity++;
                             break; // Вихід з циклу після обміну рядків   
                         }
-                        methodComplexity++;
                     }
-                    methodComplexity++;
                 }
 
                 //Зведення матриці до трикутної форми
@@ -282,44 +224,40 @@ namespace SLAR_CS
 
                 for (int j = 0; j < size; j++)
                 {
+                    methodComplexity++;
                     matrix[i, j] /= pivot;
                     inverseMatrix[i, j] /= pivot;
-                    methodComplexity++;
                 }
-                methodComplexity++;
 
                 for (int j = i + 1; j < size; j++)
                 {
+                    methodComplexity++;
                     double coefficient = matrix[j, i];
                     for (int k = 0; k < size; k++)
                     {
+                        methodComplexity++;
                         matrix[j, k] -= coefficient * matrix[i, k];
                         inverseMatrix[j, k] -= coefficient * inverseMatrix[i, k];
-                        methodComplexity++;
                     }
-                    methodComplexity++;
                 }
-                methodComplexity += 2;
             }
-            methodComplexity++;
 
             // Зводимо матрицю до одиничної форми
             for (int i = size - 1; i >= 0; i--)
             {
+                methodComplexity++;
                 for (int j = i - 1; j >= 0; j--)
                 {
+                    methodComplexity++;
                     double coefficient = matrix[j, i];
                     for (int k = 0; k < size; k++)
                     {
+                        methodComplexity++;
                         matrix[j, k] -= coefficient * matrix[i, k];
                         inverseMatrix[j, k] -= coefficient * inverseMatrix[i, k];
-                        methodComplexity++;
                     }
-                    methodComplexity += 2;
                 }
-                methodComplexity += 2;
             }
-            methodComplexity++;
 
             //запис проміжних результатів
             intermediateMatrix = new double[size, size];
@@ -332,18 +270,45 @@ namespace SLAR_CS
             }
 
             //Обчислюємо розв'язок системи
-            output = new double[size];
             for (int i = 0; i < size; i++)
             {
+                methodComplexity++;
                 output[i] = 0.0;
                 for (int j = 0; j < size; j++)
                 {
-                    output[i] += inverseMatrix[i, j] * matrix[j, size];
                     methodComplexity++;
+                    output[i] += inverseMatrix[i, j] * matrix[j, size];
                 }
-                methodComplexity += 2;
             }
-            methodComplexity++;
+        }
+
+        private int RemoveZero(int size, int i, double[,] matrix)
+        {
+            int counter = 0;
+            if (matrix[i, i] == 0)
+            {
+                // Пошук ненульового елемента у стовпці для обміну рядків
+                for (int j = i + 1; j < size; j++)
+                {
+                    counter++;
+                    if (matrix[j, i] != 0)
+                    {
+                        // Обмін рядків, якщо знайдено ненульовий елемент
+                        for (int n = 0; n < size; n++)
+                        {
+                            counter++;
+                            double temp = matrix[i, n];
+                            matrix[i, n] = matrix[j, n];
+                            matrix[j, n] = temp;
+                            temp = matrix[i, size];
+                            matrix[i, size] = matrix[j, size];
+                            matrix[j, size] = temp;
+                        }
+                        break; // Вихід з циклу після обміну рядків   
+                    }
+                }
+            }
+            return counter;
         }
 
         private void isExist(int size, double[,] matrix)
@@ -366,7 +331,7 @@ namespace SLAR_CS
             }
         }
 
-        private void isInf(double elem)
+        private void isInf(double elem, double b)
         {
             if (elem == 0)//перевірка, чи опорний елемент дорівнює нулю
             {

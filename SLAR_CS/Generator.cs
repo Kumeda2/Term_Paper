@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace SLAR_CS
 {
@@ -14,7 +13,7 @@ namespace SLAR_CS
 
         }
 
-        public void Generating(Grid MatrixField)    
+        public void Generating(Grid MatrixField)
         {
             Random rand = new Random();
             foreach (UIElement element in MatrixField.Children)

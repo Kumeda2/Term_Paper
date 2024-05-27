@@ -11,6 +11,12 @@ namespace SLAR_CS
         private const string MatrixMethod = "Матричний метод";
         private const string SavingError = "Помилка збереження файла:";
         private const string Error = "Помилка";
+        private const string HalfResultsTitleR = "Проміжні результати(обернена матриця)";
+        private const string HalfResultsTitleE = "Проміжні результати(трикутна матриця)";
+        private const string Save = "Зберегти до файла";
+        private const string Number = "Практична складність алгоритму: ";
+        private const string Graph = "Графічно";
+        private const string Solution = "Розв'язок";
         private double[] results;
         private double[,] system;
         private string method;
@@ -71,7 +77,14 @@ namespace SLAR_CS
 
             text.VerticalAlignment = VerticalAlignment.Center;
             text.HorizontalAlignment = HorizontalAlignment.Left;
-            text.Text = "Проміжні результати(Розширена матриця)";
+            if (method == MatrixMethod)
+            {
+                text.Text = HalfResultsTitleR;
+            }
+            else
+            {
+                text.Text = HalfResultsTitleE;
+            }
             text.Margin = new Thickness(8, 0, 0, 0);
 
             HalfResult.Children.Add(text);
@@ -82,7 +95,7 @@ namespace SLAR_CS
             Grid.SetColumn(file, 0);
             Grid.SetColumnSpan(file, 3);
 
-            file.Content = "Зберегти до файла";
+            file.Content = Save;
             file.Height = 30;
             file.Width = 140;
             file.FontSize = 14;
@@ -96,7 +109,7 @@ namespace SLAR_CS
             Grid.SetRow(algorithm, 7);
             Grid.SetColumn(algorithm, 3);
 
-            algorithm.Text = "Кількість операцій алгоритму: " + complexity.ToString();
+            algorithm.Text = Number + complexity.ToString();
             algorithm.FontSize = 12;
             algorithm.FontWeight = FontWeights.Bold;
             algorithm.VerticalAlignment = VerticalAlignment.Bottom;
@@ -109,7 +122,7 @@ namespace SLAR_CS
                 Grid.SetColumn(graph, 4);
                 Grid.SetRow(graph, 7);
 
-                graph.Content = "Графічно";
+                graph.Content = Graph;
                 graph.Height = 30;
                 graph.Width = 80;
                 graph.FontSize = 14;
@@ -150,7 +163,7 @@ namespace SLAR_CS
             Grid.SetColumn(elem, j);
 
             elem.IsReadOnly = true;
-            elem.Text = _halfResults[i, j].ToString();
+            elem.Text = _halfResults[i, j].ToString("0.000000");
             elem.Width = 30;
             elem.VerticalAlignment = VerticalAlignment.Center;
             elem.HorizontalAlignment = HorizontalAlignment.Center;
@@ -179,7 +192,7 @@ namespace SLAR_CS
         {
             // Створюємо вікно вибору файлу
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+            saveFileDialog.Filter = "Text files (*.txt)|*.txt";
 
             // Показуємо вікно вибору файлу і чекаємо на результат
             bool? result = saveFileDialog.ShowDialog();
@@ -195,7 +208,7 @@ namespace SLAR_CS
                     using (StreamWriter writer = new StreamWriter(filePath))
                     {
                         // Записуємо заголовок
-                        writer.WriteLine(Title);
+                        writer.WriteLine(Solution);
                         // Записуємо розв'язки
                         for (int i = 0; i < results.Length; i++)
                         {
