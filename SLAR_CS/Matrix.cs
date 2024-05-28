@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -47,8 +48,8 @@ namespace SLAR_CS
                     (int.Parse(nameParts[1]), int.Parse(nameParts[2])) :
                     (int.Parse(nameParts[1]), size);
 
-                textBox.Text = textBox.Text.Replace('.', ',');
-                if (double.TryParse(textBox.Text, out double value))
+                //textBox.Text = textBox.Text.Replace('.', ',');
+                if (double.TryParse(textBox.Text.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out double value))
                 {
                     if (Double.IsNaN(value))
                     {
