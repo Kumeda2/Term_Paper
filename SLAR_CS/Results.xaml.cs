@@ -225,7 +225,7 @@ namespace SLAR_CS
 
         private void Graph_Click(object sender, RoutedEventArgs e)
         {
-            if (graph == null)
+            if (graph != null)
             {
                 graph.Close();
             }

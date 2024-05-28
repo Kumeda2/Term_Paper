@@ -6,7 +6,6 @@ namespace SLAR_CS
 
     public partial class MainWindow : Window
     {
-
         private SizeSelector size;
         private Method method;
         private Matrix matrix;
@@ -23,7 +22,6 @@ namespace SLAR_CS
         private const string Undefined = "Система не має розв'язків";
         private const string Inf = "Система має безліч розв'язків";
         private double[,] copyOfMatrix;
-
 
         public MainWindow()
         {
