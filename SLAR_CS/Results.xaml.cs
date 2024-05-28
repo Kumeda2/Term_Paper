@@ -20,7 +20,7 @@ namespace SLAR_CS
         private double[] results;
         private double[,] system;
         private string method;
-        private Graph graph;
+        public Graph graph;
 
         public Results(double[] results, double[,] halfResult, string method, double[,] system)
         {
@@ -225,7 +225,7 @@ namespace SLAR_CS
 
         private void Graph_Click(object sender, RoutedEventArgs e)
         {
-            if (graph != null)
+            if (graph == null)
             {
                 graph.Close();
             }

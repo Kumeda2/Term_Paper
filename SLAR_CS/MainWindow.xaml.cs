@@ -6,6 +6,7 @@ namespace SLAR_CS
 
     public partial class MainWindow : Window
     {
+
         private SizeSelector size;
         private Method method;
         private Matrix matrix;
@@ -137,6 +138,10 @@ namespace SLAR_CS
 
                 if (resultsWindow != null)
                 {
+                    if (resultsWindow.graph != null)
+                    {
+                        resultsWindow.graph.Close();
+                    }
                     resultsWindow.Close();
                 }
 
