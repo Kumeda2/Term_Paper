@@ -51,16 +51,17 @@ namespace SLAR_CS
                 methodComplexity += RemoveZero(size, i, matrix);
 
                 //Перевірка на скінченність та існування розв'язків
-                isInf(matrix[i, i], matrix[i, size]);
                 isExist(size, matrix);
+                if (resultState == IsError.Undefined)
+                {
+                    return;
+                }
+                isInf(matrix[i, i]); 
                 if (resultState == IsError.Inf)
                 {
                     return;
                 }
-                else if (resultState == IsError.Undefined)
-                {
-                    return;
-                }
+                
 
                 // Прямий хід методу Гаусса(зведення до трикутного вигляду)
                 for (int j = i + 1; j < size; j++)
@@ -105,13 +106,13 @@ namespace SLAR_CS
                 methodComplexity += RemoveZero(size, i, matrix);
 
                 //Перевірка на скінченність розв'язків
-                isInf(matrix[i, i], matrix[i, size]);
                 isExist(size, matrix);
-                if (resultState == IsError.Inf)
+                if (resultState == IsError.Undefined)
                 {
                     return;
                 }
-                else if (resultState == IsError.Undefined)
+                isInf(matrix[i, i]);
+                if (resultState == IsError.Inf)
                 {
                     return;
                 }
@@ -322,7 +323,7 @@ namespace SLAR_CS
             }
         }
         //функція, що перевіряє нескінченність розв'язків
-        private void isInf(double elem, double b)
+        private void isInf(double elem)
         {
             if (elem == 0)//перевірка, чи опорний елемент дорівнює нулю
             {
@@ -342,5 +343,7 @@ namespace SLAR_CS
                 }
             }
         }
+
+        
     }
 }
