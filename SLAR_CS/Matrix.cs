@@ -7,7 +7,7 @@ using System.Windows.Media;
 
 namespace SLAR_CS
 {
-    internal class Matrix : EnumProcesResult
+    internal class Matrix
     {
         private const byte Red = 227;
         private const byte Green = 66;
@@ -20,13 +20,13 @@ namespace SLAR_CS
         private const string OutOfLimits = "Введене число, що не входить в межі";
         private const string UserInput = "Введіть число";
         private const string IncorrectAccuracy = "Введіть число з меншою точністю";
-
+        public MatrixState matrixState;
         private int size;
         public double[,] matrix;
-        public Result result;
 
         public Matrix(int _size)
         {
+            matrixState = new MatrixState();
             size = _size;
             matrix = new double[size, size + 1];
         }
@@ -121,13 +121,13 @@ namespace SLAR_CS
                 {
                     SetTextBoxProperties(textBox, Color.FromArgb(Alpha, Red, Green, Blue), UserInput);
                     MessageBox.Show(InvalidInput, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    result = Result.InvalidInput;
+                    matrixState.SetState(MatrixState.State.InvalidInput);
                     break;
                 }
-                result = Result.Success;
+                matrixState.SetState(MatrixState.State.Success);
             }
             //заповнення пустих полів нулями
-            if (result == Result.Success)
+            if ((MatrixState.State)matrixState.GetState() == MatrixState.State.Success)
                 FillingWithZeroes(MatrixGrid);
         }
 
@@ -143,7 +143,7 @@ namespace SLAR_CS
         {
             SetTextBoxProperties(textBox, Color.FromArgb(Alpha, Red, Green, Blue), UserInput);
             MessageBox.Show(text, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
-            result = Result.InvalidInput;
+            matrixState.SetState(MatrixState.State.InvalidInput);
         }
 
         //функція заповнення нулями пустих полів дл явведення

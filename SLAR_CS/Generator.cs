@@ -8,10 +8,7 @@ namespace SLAR_CS
     {
         private const int Max = 10000;
         private const int Min = -10000;
-        public Generator()
-        {
-
-        }
+        public Generator() { }
 
         //генерація СЛАР
         public void Generating(Grid MatrixField)

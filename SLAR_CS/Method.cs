@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace SLAR_CS
 {
-    internal class Method : EnumSolutions
+    internal class Method
     {
         private const byte Red = 227;
         private const byte Green = 66;
@@ -15,12 +15,13 @@ namespace SLAR_CS
         public double[] output;
         public int methodComplexity;
         public double[,] intermediateMatrix;
-        public IsError resultState = IsError.Success;
+        public MethodResultState methodResultState;
 
-        public Method()
+        public Method() 
         {
-
+            methodResultState = new MethodResultState();
         }
+
         //збереження обраного методу 
         public void SelectionAndValidation(ComboBox method)
         {
@@ -41,7 +42,7 @@ namespace SLAR_CS
         public void GaussMethod(double[,] matrix, int size)
         {
             methodComplexity = 0;
-            resultState = IsError.Success;
+            methodResultState.SetState(MethodResultState.State.Success);
             output = new double[size];
 
             // заміна опорних діагональних елементів, які дорівнюють 0
@@ -52,12 +53,12 @@ namespace SLAR_CS
 
                 //Перевірка на скінченність та існування розв'язків
                 isExist(size, matrix);
-                if (resultState == IsError.Undefined)
+                if ((MethodResultState.State)methodResultState.GetState() == MethodResultState.State.Undefined)
                 {
                     return;
                 }
                 isInf(matrix[i, i]); 
-                if (resultState == IsError.Inf)
+                if ((MethodResultState.State)methodResultState.GetState() == MethodResultState.State.Inf)
                 {
                     return;
                 }
@@ -97,7 +98,7 @@ namespace SLAR_CS
         public void JordanGaussMethod(double[,] matrix, int size)
         {
             methodComplexity = 0;
-            resultState = IsError.Success;
+            methodResultState.SetState(MethodResultState.State.Success);
             output = new double[size];
 
             for (int i = 0; i < size; i++)
@@ -107,12 +108,12 @@ namespace SLAR_CS
 
                 //Перевірка на скінченність розв'язків
                 isExist(size, matrix);
-                if (resultState == IsError.Undefined)
+                if ((MethodResultState.State)methodResultState.GetState() == MethodResultState.State.Undefined)
                 {
                     return;
                 }
                 isInf(matrix[i, i]);
-                if (resultState == IsError.Inf)
+                if ((MethodResultState.State)methodResultState.GetState() == MethodResultState.State.Inf)
                 {
                     return;
                 }
@@ -317,7 +318,7 @@ namespace SLAR_CS
                 }
                 if (zeromethodComplexity == size && matrix[i, size] != 0)
                 {
-                    resultState = IsError.Undefined;
+                    methodResultState.SetState(MethodResultState.State.Undefined);
                     return;
                 }
             }
@@ -327,7 +328,7 @@ namespace SLAR_CS
         {
             if (elem == 0)//перевірка, чи опорний елемент дорівнює нулю
             {
-                resultState = IsError.Inf;
+                methodResultState.SetState(MethodResultState.State.Inf);
                 return;
             }
         }

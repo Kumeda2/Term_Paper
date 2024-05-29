@@ -101,20 +101,20 @@ namespace SLAR_CS
                 }
             }
             //перевірка успішності заповнення матриці
-            if (matrix.result == EnumProcesResult.Result.Success)
+            if ((MatrixState.State)matrix.matrixState.GetState() == MatrixState.State.Success)
             {
                 //виконання методу Гаусса
                 if (method.selectedMethod == Gauss)
                 {
                     method.GaussMethod(copyOfMatrix, size.Size);
                     //перевірка наявності розв'язків
-                    if (method.resultState == EnumSolutions.IsError.Undefined)
+                    if ((MethodResultState.State)method.methodResultState.GetState() == MethodResultState.State.Undefined)
                     {
                         MessageBox.Show(Undefined, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
                     //перевірка нескінченності розв'язків
-                    else if (method.resultState == EnumSolutions.IsError.Inf)
+                    else if ((MethodResultState.State)method.methodResultState.GetState() == MethodResultState.State.Inf)
                     {
                         MessageBox.Show(Inf, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
@@ -125,13 +125,13 @@ namespace SLAR_CS
                     //виконання методу Жодана-Гаусса
                     method.JordanGaussMethod(copyOfMatrix, size.Size);
                     //перевірка наявності розв'язків
-                    if (method.resultState == EnumSolutions.IsError.Undefined)
+                    if ((MethodResultState.State)method.methodResultState.GetState() == MethodResultState.State.Undefined)
                     {
                         MessageBox.Show(Undefined, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
                     //перевірка нескінченності розв'язків
-                    else if (method.resultState == EnumSolutions.IsError.Inf)
+                    else if ((MethodResultState.State)method.methodResultState.GetState() == MethodResultState.State.Inf)
                     {
                         MessageBox.Show(Inf, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
@@ -141,7 +141,7 @@ namespace SLAR_CS
                 else if (method.selectedMethod == MatrixMethod)
                 {
                     //перевірка на нульовний визначник
-                    if (matrix.Determinant(size.Size) == 0 && matrix.result != EnumProcesResult.Result.InvalidInput)
+                    if (matrix.Determinant(size.Size) == 0 && (MatrixState.State)matrix.matrixState.GetState() == MatrixState.State.InvalidInput)
                     {
                         MessageBox.Show(DeterminantZero, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;

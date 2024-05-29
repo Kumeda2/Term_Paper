@@ -124,18 +124,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="EnumProcesResult.cs" />
-    <Compile Include="EnumSolutions.cs" />
+    <Compile Include="MatrixState.cs" />
     <Compile Include="Graph.xaml.cs">
       <DependentUpon>Graph.xaml</DependentUpon>
     </Compile>
     <Compile Include="Generator.cs" />
     <Compile Include="Matrix.cs" />
     <Compile Include="Method.cs" />
+    <Compile Include="MethodResultState.cs" />
     <Compile Include="Results.xaml.cs">
       <DependentUpon>Results.xaml</DependentUpon>
     </Compile>
     <Compile Include="SizeSelector.cs" />
+    <Compile Include="IState.cs" />
     <Page Include="Graph.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
