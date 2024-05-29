@@ -30,6 +30,7 @@ namespace SLAR_CS
             matrixGrid = MatrixGrid;
         }
 
+        //запис обраного розміру
         public void Selector(ComboBox size)
         {
             ComboBoxItem selectedItem = (ComboBoxItem)size.SelectedItem;
@@ -37,15 +38,17 @@ namespace SLAR_CS
             Visualisation(Size, matrixGrid);
         }
 
+        //відображення макету СЛАР
         private void Visualisation(int size, Grid Matrix)
         {
             isCorrect = true;
-
+            //очищення існуючого макету, при виборі нового розміру
             Matrix.Children.Clear();
             Sizes.Background = Brushes.Transparent;
             Sizes.ToolTip = null;
             int last = 0;
 
+            //додавання елементів в сітку зі СЛАР
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0, index = 0; j < size * 2; j += 2, index++)
@@ -59,6 +62,8 @@ namespace SLAR_CS
                 AddTextBoxB(i, last, Matrix);
             }
         }
+
+        //встановлення властивостей комбінованого списку
         public void SetComboBoxBackground(string tip)
         {
             Color color = Color.FromArgb(Alpha, Red, Green, Blue);
@@ -69,6 +74,7 @@ namespace SLAR_CS
 
         }
 
+        //додавання поля для введення коефіцієнту
         private void AddTextBox(int i, int j, int index, Grid Matrix)
         {
             TextBox textBox = new TextBox();
@@ -81,6 +87,7 @@ namespace SLAR_CS
             Matrix.Children.Add(textBox);
         }
 
+        //встановлення властивостей поля для введення
         private void SetTextBoxProperties(TextBox textBox)
         {
             textBox.MinHeight = Height;
@@ -90,6 +97,8 @@ namespace SLAR_CS
             textBox.VerticalAlignment = VerticalAlignment.Center;
             textBox.HorizontalAlignment = HorizontalAlignment.Center;
         }
+
+        //додавання тексту(X(index))
         private void AddTextBlock(int i, int j, int index, Grid Matrix)
         {
             TextBlock textBlock = new TextBlock();
@@ -108,12 +117,14 @@ namespace SLAR_CS
             Matrix.Children.Add(textBlock);
         }
 
+        //встановлення властивостей тексту
         private void SetTextBlockProperties(TextBlock textBlock)
         {
             textBlock.VerticalAlignment = VerticalAlignment.Center;
             textBlock.HorizontalAlignment = HorizontalAlignment.Center;
         }
 
+        //додавання знаку '='
         private void AddTextBlockEq(int i, int last, Grid Matrix)
         {
             TextBlock textBlock_eq = new TextBlock();
@@ -126,6 +137,7 @@ namespace SLAR_CS
             Matrix.Children.Add(textBlock_eq);
         }
 
+        //додавання поля для введення вільного члена
         private void AddTextBoxB(int i, int last, Grid Matrix)
         {
             TextBox textBox_B = new TextBox();

@@ -23,7 +23,7 @@ namespace SLAR_CS
         private string method;
         public Graph graph;
 
-        public Results(double[] results, double[,] halfResult, string method, double[,] system)
+        public Results(double[] results, string method, double[,] system)
         {
             this.results = results;
             this.method = method;
@@ -32,6 +32,7 @@ namespace SLAR_CS
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
 
+        //доддавання результатів до вікна з розв'язком
         public void AddingAnswer(double[] result)
         {
             for (int i = 0; i < result.Length; i++)
@@ -51,6 +52,7 @@ namespace SLAR_CS
             }
         }
 
+        //додавання назв невідомих до вікна з розв'язком
         public void AddingX(int size)
         {
             for (int i = 0; i < size; i++)
@@ -69,8 +71,10 @@ namespace SLAR_CS
             }
         }
 
+        //додавання елементів до панелі
         public void AddingStacpanel(int complexity, double[,] halfResults, int size)
         {
+            //додавання заголовку проміжного результату
             TextBlock text = new TextBlock();
             Grid.SetColumn(text, 0);
             Grid.SetRow(text, 0);
@@ -90,7 +94,7 @@ namespace SLAR_CS
 
             HalfResult.Children.Add(text);
 
-
+            //додавання кнопки збереження
             Button file = new Button();
             Grid.SetRow(file, 7);
             Grid.SetColumn(file, 0);
@@ -106,6 +110,7 @@ namespace SLAR_CS
             file.Click += File_Click;
             X.Children.Add(file);
 
+            //додавання складності алгоритму
             TextBlock algorithm = new TextBlock();
             Grid.SetRow(algorithm, 7);
             Grid.SetColumn(algorithm, 3);
@@ -117,6 +122,7 @@ namespace SLAR_CS
             algorithm.HorizontalAlignment = HorizontalAlignment.Left;
             X.Children.Add(algorithm);
 
+            //якщо розмір системи 2, то додавання кнопки 'Графічно'
             if (size == 2)
             {
                 Button graph = new Button();
@@ -135,6 +141,7 @@ namespace SLAR_CS
                 X.Children.Add(graph);
             }
 
+            //додавання проміжних результатів
             if (method == MatrixMethod)
             {
                 for (int i = 0; i < size; i++)
@@ -157,6 +164,7 @@ namespace SLAR_CS
             }
         }
 
+        //функція, що додає проміжні матриці в сітку з проміжними результатами
         private void AddingHalfResults(int i, int j, double[,] _halfResults)
         {
             TextBox elem = new TextBox();
@@ -171,6 +179,8 @@ namespace SLAR_CS
 
             HalfResult.Children.Add(elem);
         }
+
+        //додавання знака '=' в сітку з результатами
         public void AddingEq(int size)
         {
             for (int i = 0; i < size; i++)
@@ -189,36 +199,35 @@ namespace SLAR_CS
             }
         }
 
+        //функція збереження до файла
         private void File_Click(object sender, RoutedEventArgs e)
         {
-            // Створюємо вікно вибору файлу
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "Text files (*.txt)|*.txt";
+            //призначення назви файлу
             string defaultFileName = $"Solution_{DateTime.Now.ToString("yyyyMMdd_HHmmss", CultureInfo.InvariantCulture)}.txt";
             saveFileDialog.FileName = defaultFileName;
 
-            // Показуємо вікно вибору файлу і чекаємо на результат
+            //вибір шляху збереження
             bool? result = saveFileDialog.ShowDialog();
 
-            // Якщо користувач вибрав файл і натиснув "Зберегти"
             if (result == true)
             {
-                // Отримуємо шлях до вибраного файла
                 string filePath = saveFileDialog.FileName;
                 try
                 {
-                    // Відкриваємо файл для запису
+                    //запис в файл розв'язку
                     using (StreamWriter writer = new StreamWriter(filePath))
                     {
-                        // Записуємо заголовок
                         writer.WriteLine(Solution);
-                        // Записуємо розв'язки
+
                         for (int i = 0; i < results.Length; i++)
                         {
                             writer.WriteLine($"X{i + 1}: {results[i].ToString()}");
                         }
                     }
                 }
+                //повідомлення в разі помилки
                 catch (Exception ex)
                 {
                     MessageBox.Show($"{SavingError} {ex.Message}", Error, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -226,6 +235,7 @@ namespace SLAR_CS
             }
         }
 
+        //функція створення графа
         private void Graph_Click(object sender, RoutedEventArgs e)
         {
             if (graph != null)

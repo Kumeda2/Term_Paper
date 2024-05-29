@@ -21,22 +21,15 @@ namespace SLAR_CS
         {
 
         }
-
+        //збереження обраного методу 
         public void SelectionAndValidation(ComboBox method)
         {
             ComboBoxItem selectedItem = (ComboBoxItem)method.SelectedItem;
-            if (selectedItem == null)
-            {
-                MethodBackground(method);
-            }
-            else
-            {
-                selectedMethod = selectedItem.Content.ToString();
-                method.Background = Brushes.Transparent;
-                method.ToolTip = null;
-            }
+            selectedMethod = selectedItem.Content.ToString();
+            method.Background = Brushes.Transparent;
+            method.ToolTip = null;
         }
-
+        //функція для змінми вигляду комбобоксу
         public void MethodBackground(ComboBox method)
         {
             Color color = Color.FromArgb(Alpha, Red, Green, Blue);
@@ -44,6 +37,7 @@ namespace SLAR_CS
             method.Background = brush;
             method.ToolTip = MethodNotSelected;
         }
+        //реалізація методу Гаусса
         public void GaussMethod(double[,] matrix, int size)
         {
             methodComplexity = 0;
@@ -56,7 +50,7 @@ namespace SLAR_CS
                 methodComplexity++;
                 methodComplexity += RemoveZero(size, i, matrix);
 
-                //Перевірка на скінченність розв'язків
+                //Перевірка на скінченність та існування розв'язків
                 isInf(matrix[i, i], matrix[i, size]);
                 isExist(size, matrix);
                 if (resultState == IsError.Inf)
@@ -68,7 +62,7 @@ namespace SLAR_CS
                     return;
                 }
 
-                // Прямий хід методу Гаусса: нормалізація матриці
+                // Прямий хід методу Гаусса(зведення до трикутного вигляду)
                 for (int j = i + 1; j < size; j++)
                 {
                     methodComplexity++;
@@ -85,7 +79,7 @@ namespace SLAR_CS
             //запис проміжних результатів
             intermediatePhase(size, matrix);
 
-            // Зворотній хід методу Гаусса: обчислення розв'язку
+            // Зворотній хід методу Гаусса(обчислення розв'язку)
             for (int i = size - 1; i >= 0; i--)
             {
                 methodComplexity++;
@@ -98,6 +92,7 @@ namespace SLAR_CS
                 output[i] /= matrix[i, i];
             }
         }
+        //реалізація методу Жордана-Гаусса
         public void JordanGaussMethod(double[,] matrix, int size)
         {
             methodComplexity = 0;
@@ -164,7 +159,7 @@ namespace SLAR_CS
                     matrix[j, size] -= coefficient * matrix[i, size];
                 }
             }
-
+            //запис розв'язку
             output = new double[size];
             for (int i = 0; i < size; i++)
             {
@@ -191,19 +186,17 @@ namespace SLAR_CS
                     }
                 }
             }
-
+            // пошук і заміна нульового діагонального елемента
             for (int i = 0; i < size; i++)
             {
                 methodComplexity++;
                 if (matrix[i, i] == 0)
                 {
-                    // Пошук ненульового елемента у стовпці для обміну рядків
                     for (int j = i + 1; j < size - 1; j++)
                     {
                         methodComplexity++;
                         if (matrix[j, i] != 0)
                         {
-                            // Обмін рядків, якщо знайдено ненульовий елемент
                             for (int n = 0; n < size; n++)
                             {
                                 methodComplexity++;
@@ -214,7 +207,7 @@ namespace SLAR_CS
                                 inverseMatrix[i, n] = inverseMatrix[j, n];
                                 inverseMatrix[j, n] = temp;
                             }
-                            break; // Вихід з циклу після обміну рядків   
+                            break;
                         }
                     }
                 }
@@ -281,19 +274,17 @@ namespace SLAR_CS
                 }
             }
         }
-
+        //функція для заміни нульових елементів діагоналі
         private int RemoveZero(int size, int i, double[,] matrix)
         {
             int counter = 0;
             if (matrix[i, i] == 0)
             {
-                // Пошук ненульового елемента у стовпці для обміну рядків
                 for (int j = i + 1; j < size; j++)
                 {
                     counter++;
                     if (matrix[j, i] != 0)
                     {
-                        // Обмін рядків, якщо знайдено ненульовий елемент
                         for (int n = 0; n < size; n++)
                         {
                             counter++;
@@ -304,13 +295,13 @@ namespace SLAR_CS
                             matrix[i, size] = matrix[j, size];
                             matrix[j, size] = temp;
                         }
-                        break; // Вихід з циклу після обміну рядків   
+                        break;
                     }
                 }
             }
             return counter;
         }
-
+        //функція, що перевіряє існування розв'язків
         private void isExist(int size, double[,] matrix)
         {
             for (int i = 0; i < size; i++)
@@ -330,7 +321,7 @@ namespace SLAR_CS
                 }
             }
         }
-
+        //функція, що перевіряє нескінченність розв'язків
         private void isInf(double elem, double b)
         {
             if (elem == 0)//перевірка, чи опорний елемент дорівнює нулю
@@ -339,7 +330,7 @@ namespace SLAR_CS
                 return;
             }
         }
-
+        //функція, що зберігає проміжні результати
         private void intermediatePhase(int size, double[,] matrix)
         {
             intermediateMatrix = new double[size, size + 1];

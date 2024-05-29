@@ -31,38 +31,47 @@ namespace SLAR_CS
             matrix = new double[size, size + 1];
         }
 
+        //заповнення матриці введеними значеннями
         public void FillingMatrix(int size, Grid MatrixGrid)
         {
 
+            //перебір усіх елементів сітки зі СЛАР
             foreach (UIElement element in MatrixGrid.Children)
             {
+
+                //якщо елемент - не поле для введення, пропустити
                 if (!(element is TextBox textBox)) continue;
 
+                //видалення візульних змін з текстового поля
                 SetTextBoxProperties(textBox);
 
+                //ініціалізація індексів матриці
                 int i, j;
 
-                //перевіряємо, чи це коефіцієнт, чи вільний член
+                //перевірка, за що відповідає текстове поле - коефіцієнт, чи вільний член
                 string[] nameParts = textBox.Name.Split('_');
                 (i, j) = nameParts.Length > 2 ?
                     (int.Parse(nameParts[1]), int.Parse(nameParts[2])) :
                     (int.Parse(nameParts[1]), size);
 
-                //textBox.Text = textBox.Text.Replace('.', ',');
+                //перетворення тексту з поля в числовий вид
                 if (double.TryParse(textBox.Text.Replace(',', '.'), NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, CultureInfo.InvariantCulture, out double value))
                 {
+                    //перевірка на введення NaN
                     if (Double.IsNaN(value))
                     {
                         IncorrectActions(textBox, InvalidInput);
                         break;
                     }
 
+                    //перевірка входження в діапазон
                     if (value > Max || value < Min)
                     {
                         IncorrectActions(textBox, OutOfLimits);
                         break;
                     }
-                    //валідація експоненти
+
+                    //валідація експонененціального введення
                     if (textBox.Text.Contains('e') || textBox.Text.Contains('E'))
                     {
                         string[] expParts = textBox.Text.Split('e', 'E');
@@ -76,8 +85,17 @@ namespace SLAR_CS
                         }
                     }
 
+                    //перевірка на допустимість кількості знаків пілся коми
                     int counter = 0;
-                    if (textBox.Text.Contains(','))
+                    if (textBox.Text.Contains('.'))
+                    {
+                        string[] afterDot = textBox.Text.Split('.');
+                        foreach (char c in afterDot[1])
+                        {
+                            counter++;
+                        }
+                    }
+                    else if (textBox.Text.Contains(","))
                     {
                         string[] afterDot = textBox.Text.Split(',');
                         foreach (char c in afterDot[1])
@@ -93,10 +111,12 @@ namespace SLAR_CS
 
                     matrix[i, j] = value;
                 }
-                else if (string.IsNullOrEmpty(textBox.Text))
+                //якщо користувач нічого не ввів в матрицю записується 0
+                else if (textBox.Text == "")
                 {
                     matrix[i, j] = 0;
                 }
+                //відображення помилки при неправильному введенні
                 else
                 {
                     SetTextBoxProperties(textBox, Color.FromArgb(Alpha, Red, Green, Blue), UserInput);
@@ -106,16 +126,19 @@ namespace SLAR_CS
                 }
                 result = Result.Success;
             }
+            //заповнення пустих полів нулями
             if (result == Result.Success)
                 FillingWithZeroes(MatrixGrid);
         }
-        ///
+
+        //встановлення властивостей поля для введення
         public void SetTextBoxProperties(TextBox textBox, Color? backgroundColor = null, string toolTip = null)
         {
             textBox.Background = new SolidColorBrush(backgroundColor ?? Colors.Transparent);
             textBox.ToolTip = toolTip;
         }
 
+        //обробка некоректних дій
         private void IncorrectActions(TextBox textBox, string text)
         {
             SetTextBoxProperties(textBox, Color.FromArgb(Alpha, Red, Green, Blue), UserInput);
@@ -123,6 +146,7 @@ namespace SLAR_CS
             result = Result.InvalidInput;
         }
 
+        //функція заповнення нулями пустих полів дл явведення
         private void FillingWithZeroes(Grid MatrixGrid)
         {
             foreach (UIElement element in MatrixGrid.Children)
@@ -137,6 +161,7 @@ namespace SLAR_CS
             }
         }
 
+        //обчислення визначника
         public double Determinant(int size)
         {
             double[,] copyOfMatrix = new double[size, size];

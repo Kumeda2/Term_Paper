@@ -13,6 +13,7 @@ namespace SLAR_CS
 
         }
 
+        //генерація СЛАР
         public void Generating(Grid MatrixField)
         {
             Random rand = new Random();

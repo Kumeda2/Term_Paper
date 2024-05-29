@@ -3,7 +3,6 @@ using System.Windows.Controls;
 
 namespace SLAR_CS
 {
-
     public partial class MainWindow : Window
     {
         private SizeSelector size;
@@ -29,6 +28,7 @@ namespace SLAR_CS
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
 
+        //обробка події вибору методу
         private void Method_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox methodComboBox = (ComboBox)sender;
@@ -36,6 +36,7 @@ namespace SLAR_CS
             method.SelectionAndValidation(methodComboBox);
         }
 
+        //обробка події вибору розміру
         private void Size_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox sizeComboBox = (ComboBox)sender;
@@ -43,6 +44,7 @@ namespace SLAR_CS
             size.Selector(sizeComboBox);
         }
 
+        //обробка події натискання на кнопку очищення системи
         private void Erase_Click(object sender, RoutedEventArgs e)
         {
             foreach (UIElement element in Matrix.Children)
@@ -57,34 +59,39 @@ namespace SLAR_CS
             Generation.Visibility = Visibility.Collapsed;
         }
 
+        //обробка події натискання на кнопку обчислення СЛАР
         private void Calculate_Click(object sender, RoutedEventArgs e)
         {
+            //перевірка чи всі параметри обрано
             if (size == null && method == null)
             {
-                MessageBox.Show(ParametersNotSet, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ParametersNotSet, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);//виведення помилки
                 return;
             }
+            //перевірка чи обрано розмір
             else if (size == null || size.Size == 0)
             {
                 size = new SizeSelector(Size, Matrix);
                 size.Size = 0;
-                size.SetComboBoxBackground(SizeNotSelected);
-                MessageBox.Show(SizeNotSelected, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
+                size.SetComboBoxBackground(SizeNotSelected);//зміна кольору комбобокса для наглядності
+                MessageBox.Show(SizeNotSelected, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);//виведення помилки
                 return;
             }
+            //перевірка чи обрано метод
             else if (method == null || method.selectedMethod == "")
             {
                 method = new Method();
                 method.selectedMethod = "";
-                method.MethodBackground(Method);
-                MessageBox.Show(MethodNotSeleted, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
+                method.MethodBackground(Method);//зміна кольору комбобокса для наглядності
+                MessageBox.Show(MethodNotSeleted, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);//виведення помилки
                 return;
             }
+            //створення матриці та її копії
             else
             {
                 matrix = new Matrix(size.Size);
-                matrix.FillingMatrix(size.Size, Matrix);
-                copyOfMatrix = new double[size.Size, size.Size + 1];
+                matrix.FillingMatrix(size.Size, Matrix);//заповнення розширеної матриці коефіцієнтами та вільними членами
+                copyOfMatrix = new double[size.Size, size.Size + 1];//копія розширеної матриці 
                 for (int i = 0; i < size.Size; i++)
                 {
                     for (int j = 0; j < size.Size + 1; j++)
@@ -93,17 +100,20 @@ namespace SLAR_CS
                     }
                 }
             }
-
+            //перевірка успішності заповнення матриці
             if (matrix.result == EnumProcesResult.Result.Success)
             {
+                //виконання методу Гаусса
                 if (method.selectedMethod == Gauss)
                 {
                     method.GaussMethod(copyOfMatrix, size.Size);
+                    //перевірка наявності розв'язків
                     if (method.resultState == EnumSolutions.IsError.Undefined)
                     {
                         MessageBox.Show(Undefined, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
+                    //перевірка нескінченності розв'язків
                     else if (method.resultState == EnumSolutions.IsError.Inf)
                     {
                         MessageBox.Show(Inf, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -112,20 +122,25 @@ namespace SLAR_CS
                 }
                 else if (method.selectedMethod == JordanGauss)
                 {
+                    //виконання методу Жодана-Гаусса
                     method.JordanGaussMethod(copyOfMatrix, size.Size);
+                    //перевірка наявності розв'язків
                     if (method.resultState == EnumSolutions.IsError.Undefined)
                     {
                         MessageBox.Show(Undefined, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
+                    //перевірка нескінченності розв'язків
                     else if (method.resultState == EnumSolutions.IsError.Inf)
                     {
                         MessageBox.Show(Inf, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
                 }
+                //виконання матричного методу 
                 else if (method.selectedMethod == MatrixMethod)
                 {
+                    //перевірка на нульовний визначник
                     if (matrix.Determinant(size.Size) == 0 && matrix.result != EnumProcesResult.Result.InvalidInput)
                     {
                         MessageBox.Show(DeterminantZero, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -133,7 +148,7 @@ namespace SLAR_CS
                     }
                     method.MatrixMethod(copyOfMatrix, size.Size);
                 }
-
+                //закриття вікна з розв'язком, якщо воно вже існує
                 if (resultsWindow != null)
                 {
                     if (resultsWindow.graph != null)
@@ -143,7 +158,8 @@ namespace SLAR_CS
                     resultsWindow.Close();
                 }
 
-                resultsWindow = new Results(method.output, method.intermediateMatrix, method.selectedMethod, matrix.matrix);
+                //виведення результатів
+                resultsWindow = new Results(method.output, method.selectedMethod, matrix.matrix);
                 resultsWindow.Show();
                 resultsWindow.AddingAnswer(method.output);
                 resultsWindow.AddingX(method.output.Length);
@@ -157,28 +173,31 @@ namespace SLAR_CS
             }
         }
 
+        //обробка події натискання на кнопку генерації
         private void Generation_Click(object sender, RoutedEventArgs e)
         {
+            //перевірка вибору параметрів СЛАР
             if (size == null && method == null)
             {
-                MessageBox.Show(ParametersNotSet, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ParametersNotSet, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);//виведення помилки
                 return;
             }
+            //перевірка вибору розміру
             else if (size == null)
             {
                 size = new SizeSelector(Size, Matrix);
-                size.SetComboBoxBackground(SizeNotSelected);
-                MessageBox.Show(SizeNotSelected, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
+                size.SetComboBoxBackground(SizeNotSelected);//зміна кольору комбобокса для наглядності
+                MessageBox.Show(SizeNotSelected, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);//виведення помилки
                 return;
             }
             if (size.isCorrect == false)
             {
-                size.SetComboBoxBackground(SizeNotSelected);
-                MessageBox.Show(SizeNotSelected, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
+                size.SetComboBoxBackground(SizeNotSelected);//зміна кольору комбобокса для наглядності
+                MessageBox.Show(SizeNotSelected, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);//виведення помилки
                 return;
             }
             generation = new Generator();
-            generation.Generating(Matrix);
+            generation.Generating(Matrix);//генерація СЛАР
         }
     }
 }

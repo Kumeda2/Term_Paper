@@ -26,9 +26,10 @@ namespace SLAR_CS
             this.results = results;
         }
 
+        //побудова графіка
         public void SetupPlot(double[,] cubicSystem)
         {
-
+            //додавання елементів в вікно
             Button saveToFile = new Button();
             Grid.SetColumn(saveToFile, 1);
             Grid.SetRow(saveToFile, 1);
@@ -66,6 +67,7 @@ namespace SLAR_CS
             double secondDotX;
             double secondDotY;
 
+            //обчислення точок для побудови графіка першого рівняння
             if (cubicSystem[0, 1] != 0)
             {
                 firstDotX = results[0] + 2;
@@ -84,25 +86,28 @@ namespace SLAR_CS
             }
 
             var plotModel = new PlotModel { Title = Graphic };
-
+            //встановлення властивостей лінії
             var lineSeries_1 = new LineSeries
             {
                 Title = First,
                 MarkerType = MarkerType.None
             };
 
+            //додавання точок до об'єкта lineSeries_1
             lineSeries_1.Points.Add(new DataPoint(results[0], results[1]));
 
             lineSeries_1.Points.Add(new DataPoint(firstDotX, firstDotY));
 
             lineSeries_1.Points.Add(new DataPoint(secondDotX, secondDotY));
 
+            //встановлення властивостей лінії
             var lineSeries_2 = new LineSeries
             {
                 Title = Second,
                 MarkerType = MarkerType.None
             };
 
+            //обчислення точок для побудови графіка другого рівняння
             if (cubicSystem[0, 1] != 0)
             {
                 firstDotX = results[0] + 2;
@@ -120,6 +125,7 @@ namespace SLAR_CS
                 secondDotX = (cubicSystem[1, 2] - cubicSystem[1, 1] * secondDotY) / cubicSystem[1, 0];
             }
 
+            //додавання точок до об'єкта lineSeries_2
             lineSeries_2.Points.Add(new DataPoint(firstDotX, firstDotY));
 
             lineSeries_2.Points.Add(new DataPoint(secondDotX, secondDotY));
@@ -130,13 +136,16 @@ namespace SLAR_CS
             plotView.Model = plotModel;
         }
 
+        //функція для збереження у файл
         private void File_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "Text files (*.txt)|*.txt";
+            //призначення назви файлу
             string defaultFileName = $"Solution_{DateTime.Now.ToString("yyyyMMdd_HHmmss", CultureInfo.InvariantCulture)}.txt";
             saveFileDialog.FileName = defaultFileName;
 
+            //вибір шляху збереження
             bool? result = saveFileDialog.ShowDialog();
 
             if (result == true)
@@ -144,6 +153,7 @@ namespace SLAR_CS
                 string filePath = saveFileDialog.FileName;
                 try
                 {
+                    //запис в файл розв'язку
                     using (StreamWriter writer = new StreamWriter(filePath))
                     {
                         writer.WriteLine(Solution);
@@ -153,7 +163,8 @@ namespace SLAR_CS
                             writer.WriteLine($"X{i + 1}: {results[i].ToString()}");
                         }
                     }
-                }
+                } 
+                //повідомлення в разі помилки
                 catch (Exception ex)
                 {
                     MessageBox.Show($"{SavingError} {ex.Message}", Error, MessageBoxButton.OK, MessageBoxImage.Error);
