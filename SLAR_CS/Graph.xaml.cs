@@ -5,6 +5,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
+using System.Globalization;
 
 namespace SLAR_CS
 {
@@ -133,6 +134,8 @@ namespace SLAR_CS
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "Text files (*.txt)|*.txt";
+            string defaultFileName = $"Solution_{DateTime.Now.ToString("yyyyMMdd_HHmmss", CultureInfo.InvariantCulture)}.txt";
+            saveFileDialog.FileName = defaultFileName;
 
             bool? result = saveFileDialog.ShowDialog();
 

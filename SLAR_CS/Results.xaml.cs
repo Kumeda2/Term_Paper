@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -193,6 +194,8 @@ namespace SLAR_CS
             // Створюємо вікно вибору файлу
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "Text files (*.txt)|*.txt";
+            string defaultFileName = $"Solution_{DateTime.Now.ToString("yyyyMMdd_HHmmss", CultureInfo.InvariantCulture)}.txt";
+            saveFileDialog.FileName = defaultFileName;
 
             // Показуємо вікно вибору файлу і чекаємо на результат
             bool? result = saveFileDialog.ShowDialog();

@@ -49,7 +49,7 @@ namespace SLAR_CS
                     (int.Parse(nameParts[1]), size);
 
                 //textBox.Text = textBox.Text.Replace('.', ',');
-                if (double.TryParse(textBox.Text.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out double value))
+                if (double.TryParse(textBox.Text.Replace(',', '.'), NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, CultureInfo.InvariantCulture, out double value))
                 {
                     if (Double.IsNaN(value))
                     {
