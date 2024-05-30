@@ -107,69 +107,67 @@ namespace SLAR_CS
                 if (method.selectedMethod == Gauss)
                 {
                     method.GaussMethod(copyOfMatrix, size.Size);
-                    //перевірка наявності розв'язків
-                    if ((MethodResultState.State)method.methodResultState.GetState() == MethodResultState.State.Undefined)
-                    {
-                        MessageBox.Show(Undefined, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
-                    //перевірка нескінченності розв'язків
-                    else if ((MethodResultState.State)method.methodResultState.GetState() == MethodResultState.State.Inf)
-                    {
-                        MessageBox.Show(Inf, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
                 }
                 else if (method.selectedMethod == JordanGauss)
                 {
                     //виконання методу Жодана-Гаусса
                     method.JordanGaussMethod(copyOfMatrix, size.Size);
-                    //перевірка наявності розв'язків
-                    if ((MethodResultState.State)method.methodResultState.GetState() == MethodResultState.State.Undefined)
-                    {
-                        MessageBox.Show(Undefined, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
-                    //перевірка нескінченності розв'язків
-                    else if ((MethodResultState.State)method.methodResultState.GetState() == MethodResultState.State.Inf)
-                    {
-                        MessageBox.Show(Inf, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
                 }
                 //виконання матричного методу 
                 else if (method.selectedMethod == MatrixMethod)
                 {
                     //перевірка на нульовний визначник
-                    if (matrix.Determinant(size.Size) == 0 && (MatrixState.State)matrix.matrixState.GetState() == MatrixState.State.InvalidInput)
+                    if (matrix.Determinant(size.Size) == 0)
                     {
                         MessageBox.Show(DeterminantZero, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
                     method.MatrixMethod(copyOfMatrix, size.Size);
                 }
-                //закриття вікна з розв'язком, якщо воно вже існує
-                if (resultsWindow != null)
+
+                var state = (MethodResultState.State)method.methodResultState.GetState();
+                
+                if (ValidResult(state))
                 {
-                    if (resultsWindow.graph != null)
+                    //закриття вікна з розв'язком, якщо воно вже існує
+                    if (resultsWindow != null)
                     {
-                        resultsWindow.graph.Close();
+                        if (resultsWindow.graph != null)
+                        {
+                            resultsWindow.graph.Close();
+                        }
+                        resultsWindow.Close();
                     }
-                    resultsWindow.Close();
+
+                    //виведення результатів
+                    resultsWindow = new Results(method.output, method.selectedMethod, matrix.matrix);
+                    resultsWindow.Show();
+                    resultsWindow.AddingAnswer(method.output);
+                    resultsWindow.AddingX(method.output.Length);
+                    resultsWindow.AddingEq(method.output.Length);
+                    resultsWindow.AddingStacpanel(method.methodComplexity, method.intermediateMatrix, method.output.Length);
+                    resultsWindow.Closed += (s, args) =>
+                    {
+                        resultsWindow = null;
+                    };
                 }
+            }
+        }
 
-                //виведення результатів
-                resultsWindow = new Results(method.output, method.selectedMethod, matrix.matrix);
-                resultsWindow.Show();
-                resultsWindow.AddingAnswer(method.output);
-                resultsWindow.AddingX(method.output.Length);
-                resultsWindow.AddingEq(method.output.Length);
-                resultsWindow.AddingStacpanel(method.methodComplexity, method.intermediateMatrix, method.output.Length);
-                resultsWindow.Closed += (s, args) =>
-                {
-                    resultsWindow = null;
-                };
-
+        private bool ValidResult(MethodResultState.State state)
+        {
+            switch (state)
+            {
+                case MethodResultState.State.Undefined:
+                    MessageBox.Show(Undefined, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                case MethodResultState.State.Inf:
+                    MessageBox.Show(Inf, ProgramName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                // Add more cases if needed
+                default:
+                    // Handle other states if necessary
+                    return true;
             }
         }
 

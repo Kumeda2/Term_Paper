@@ -16,10 +16,8 @@ namespace SLAR_CS
         private const double Max = 10000.0;
         private const double Min = -10000.0;
         private const string ProgramName = "Калькулятор СЛАР";
-        private const string InvalidInput = "Введено некоректні символи";
-        private const string OutOfLimits = "Введене число, що не входить в межі";
-        private const string UserInput = "Введіть число";
-        private const string IncorrectAccuracy = "Введіть число з меншою точністю";
+        private const string InvalidInput = "Некоректне введення. Введіть число, що входить в допустимі межі";
+        private const string UserInput = "Введіть число, дотримуючись правил";
         public MatrixState matrixState;
         private int size;
         public double[,] matrix;
@@ -67,7 +65,7 @@ namespace SLAR_CS
                     //перевірка входження в діапазон
                     if (value > Max || value < Min)
                     {
-                        IncorrectActions(textBox, OutOfLimits);
+                        IncorrectActions(textBox, InvalidInput);
                         break;
                     }
 
@@ -79,7 +77,7 @@ namespace SLAR_CS
                         {
                             if (Math.Abs(power) > 6)
                             {
-                                IncorrectActions(textBox, IncorrectAccuracy);
+                                IncorrectActions(textBox, InvalidInput);
                                 break;
                             }
                         }
@@ -105,12 +103,13 @@ namespace SLAR_CS
                     }
                     if (counter > 6)
                     {
-                        IncorrectActions(textBox, IncorrectAccuracy);
+                        IncorrectActions(textBox, InvalidInput);
                         break;
                     }
 
                     matrix[i, j] = value;
                 }
+
                 //якщо користувач нічого не ввів в матрицю записується 0
                 else if (textBox.Text == "")
                 {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace SLAR_CS
@@ -10,14 +9,14 @@ namespace SLAR_CS
         private const byte Green = 66;
         private const byte Blue = 66;
         private const byte Alpha = 128;
-        private const string MethodNotSelected = "Метод не обрано";
+        private const string MethodNotSelected = "Оберіть метод";
         public string selectedMethod;
         public double[] output;
         public int methodComplexity;
         public double[,] intermediateMatrix;
         public MethodResultState methodResultState;
 
-        public Method() 
+        public Method()
         {
             methodResultState = new MethodResultState();
         }
@@ -57,24 +56,24 @@ namespace SLAR_CS
                 {
                     return;
                 }
-                isInf(matrix[i, i]); 
+                isInf(matrix[i, i]);
                 if ((MethodResultState.State)methodResultState.GetState() == MethodResultState.State.Inf)
                 {
                     return;
                 }
-                
+
 
                 // Прямий хід методу Гаусса(зведення до трикутного вигляду)
                 for (int j = i + 1; j < size; j++)
                 {
                     methodComplexity++;
-                    double coefficient = matrix[j, i] / matrix[i, i]; 
+                    double coefficient = matrix[j, i] / matrix[i, i];
                     for (int n = i; n < size; n++)
                     {
                         methodComplexity++;
-                        matrix[j, n] -= coefficient * matrix[i, n]; 
+                        matrix[j, n] -= coefficient * matrix[i, n];
                     }
-                    matrix[j, size] -= coefficient * matrix[i, size]; 
+                    matrix[j, size] -= coefficient * matrix[i, size];
                 }
             }
 
@@ -89,7 +88,7 @@ namespace SLAR_CS
                 for (int j = i + 1; j < size; j++)
                 {
                     methodComplexity++;
-                    output[i] -= matrix[i, j] * output[j];  
+                    output[i] -= matrix[i, j] * output[j];
                 }
                 output[i] /= matrix[i, i];
             }
@@ -345,6 +344,6 @@ namespace SLAR_CS
             }
         }
 
-        
+
     }
 }
