@@ -153,7 +153,7 @@ namespace SLAR_CS
                 }
             }
         }
-
+        //перевірка упішності роботи методу
         private bool ValidResult(MethodResultState.State state)
         {
             switch (state)
