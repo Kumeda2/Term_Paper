@@ -193,7 +193,7 @@ namespace SLAR_CS
                 methodComplexity++;
                 if (matrix[i, i] == 0)
                 {
-                    for (int j = i + 1; j < size - 1; j++)
+                    for (int j = i + 1; j < size; j++)
                     {
                         methodComplexity++;
                         if (matrix[j, i] != 0)
@@ -237,7 +237,7 @@ namespace SLAR_CS
             }
 
             // Зводимо матрицю до одиничної форми
-            for (int i = size - 1; i >= 0; i--)
+            for (int i = size - 1; i > 0; i--)
             {
                 methodComplexity++;
                 for (int j = i - 1; j >= 0; j--)
