@@ -286,16 +286,17 @@ namespace SLAR_CS
                     counter++;
                     if (matrix[j, i] != 0)
                     {
+                        double temp;
                         for (int n = 0; n < size; n++)
                         {
                             counter++;
-                            double temp = matrix[i, n];
+                            temp = matrix[i, n];
                             matrix[i, n] = matrix[j, n];
                             matrix[j, n] = temp;
-                            temp = matrix[i, size];
-                            matrix[i, size] = matrix[j, size];
-                            matrix[j, size] = temp;
                         }
+                        temp = matrix[i, size];
+                        matrix[i, size] = matrix[j, size];
+                        matrix[j, size] = temp;
                         break;
                     }
                 }
