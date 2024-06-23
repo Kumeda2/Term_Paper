@@ -108,7 +108,7 @@ namespace SLAR_CS
             };
 
             //обчислення точок для побудови графіка другого рівняння
-            if (cubicSystem[0, 1] != 0)
+            if (cubicSystem[1, 1] != 0)
             {
                 firstDotX = results[0] + 2;
                 firstDotY = (cubicSystem[1, 2] - cubicSystem[1, 0] * firstDotX) / cubicSystem[1, 1];
